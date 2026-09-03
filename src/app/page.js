@@ -559,7 +559,7 @@ export default function Home() {
       });
 
       if (pecasMenoresQueVendas) {
-        setMensagem("A quantidade de peças não pode ser menor que a quantidade de vendas.");
+        setMensagem("Confira o lançamento: a quantidade de peças deve ser igual ou maior que a quantidade de vendas.");
         setSalvando(false);
         return;
       }
@@ -607,7 +607,14 @@ export default function Home() {
       const { error } = await supabase.from("lancamentos_pa").insert(registros);
 
       if (error) {
-        setMensagem(error.message);
+        const erroPecas = error.message?.includes("lancamentos_pa_pecas_maior_igual_vendas")
+          || error.message?.toLowerCase().includes("quantidade de peças");
+
+        setMensagem(
+          erroPecas
+            ? "Confira o lançamento: a quantidade de peças deve ser igual ou maior que a quantidade de vendas."
+            : error.message
+        );
         setSalvando(false);
         return;
       }
