@@ -150,10 +150,6 @@ button:focus-visible {
   display: none;
 }
 
-.sectionHeading .compactButton {
-  margin-right: 195px;
-}
-
 .choiceButton {
   border-color: var(--line);
   color: var(--wine-dark);
@@ -257,10 +253,6 @@ button:focus-visible {
   .sectionHeading {
     min-height: 0;
     padding-right: 0;
-  }
-
-  .sectionHeading .compactButton {
-    margin-right: 0;
   }
 
   .dailyForm > label:first-child {
