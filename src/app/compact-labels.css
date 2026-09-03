@@ -62,6 +62,32 @@
   .sectionHeading {
     min-height: 70px;
   }
+
+  .dailyForm {
+    gap: 9px;
+  }
+
+  .choiceGrid {
+    gap: 5px;
+  }
+
+  .choiceButton {
+    min-height: 31px;
+    padding: 4px 9px;
+    font-size: 13px;
+  }
+
+  .statusChoices {
+    width: min(100%, 760px);
+  }
+
+  .storeChoices {
+    width: min(100%, 620px);
+  }
+
+  .fieldTitle {
+    margin-bottom: 3px;
+  }
 }
 
 @media (max-width: 760px) {
