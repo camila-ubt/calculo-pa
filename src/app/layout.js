@@ -1,5 +1,6 @@
 import "./globals.css";
 import "./calculadora-metas-theme.css";
+import "./compact-labels.css";
 
 export const metadata = {
   title: "Cálculo PA",
