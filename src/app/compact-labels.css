@@ -58,6 +58,34 @@
   opacity: .45;
 }
 
+.launchActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.launchActions .saveButton {
+  justify-self: auto;
+}
+
+.removeLaunchButton {
+  min-height: 34px;
+  padding: 6px 12px;
+  border-color: rgba(123, 41, 72, 0.2);
+  background: rgba(255, 250, 246, 0.92);
+  color: var(--wine);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.removeLaunchButton:hover:not(:disabled) {
+  border-color: rgba(123, 41, 72, 0.34);
+  background: var(--rose-light);
+  color: var(--wine-dark);
+}
+
 .todayNavButton {
   border-color: transparent;
   background: transparent;
@@ -129,5 +157,16 @@
 @media (max-width: 520px) {
   .statusChoices {
     grid-template-columns: 1fr;
+  }
+
+  .launchActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .launchActions .saveButton,
+  .launchActions .removeLaunchButton {
+    width: 100%;
+    max-width: none;
   }
 }
