@@ -55,18 +55,20 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
           <button className="prizeClose" type="button" aria-label="Fechar premiação" onClick={() => dialogRef.current.close()}>×</button>
           <div className="prizeHeader">
             <div className="prizeMedal" aria-hidden="true">🏆</div>
-            <p className="prizeMonth">{mesFormatado}</p>
+            <div>
+              <h2 id="prizeTitle">Parabéns!</h2>
+              <p className="prizeMonth">{mesFormatado}</p>
+            </div>
           </div>
-          <h2 id="prizeTitle">Parabéns pelo seu resultado!</h2>
           <div className="prizeAmount">
-            <span>Premiação prevista</span>
+            <span className="prizeAmountLabel">Premiação prevista</span>
             <strong>R$ {valor}</strong>
             <span>em peças</span>
           </div>
           <p className="prizeStats">PA {valorPa.toFixed(2).replace(".", ",")} <span aria-hidden="true">·</span> {diasValidos} dias trabalhados</p>
           <div id="prizeVerification" className="prizeVerification">
             <strong>Aguardando verificação</strong>
-            <p>A liberação depende da verificação e aprovação dos lançamentos. O valor pode mudar após a conferência.</p>
+            <p>Liberação após verificação e aprovação dos lançamentos. O valor pode ser ajustado.</p>
           </div>
           <button className="primary prizeConfirm" type="button" autoFocus onClick={() => dialogRef.current.close()}>Entendi, vamos comemorar!</button>
         </div>
