@@ -16,9 +16,9 @@ button { cursor: pointer; }
 button:disabled { cursor: wait; opacity: .65; }
 
 main {
-  width: min(100% - 32px, 1320px);
+  width: min(100% - 28px, 1320px);
   margin: 0 auto;
-  padding: 24px 0 48px;
+  padding: 14px 0 24px;
 }
 
 .loginPage {
@@ -30,8 +30,8 @@ main {
 .card {
   background: #fff;
   border: 1px solid #e5dfea;
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 18px;
 }
 
 .loginCard {
@@ -80,7 +80,7 @@ h1, h2, h3, p { margin-top: 0; }
 
 label {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   font-weight: 700;
 }
 
@@ -100,10 +100,10 @@ label {
 
 input, select, textarea {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   border: 1px solid #d8d0de;
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 9px 11px;
   background: #fff;
 }
 
@@ -117,8 +117,8 @@ textarea { min-height: 84px; resize: vertical; }
 .primary {
   border: 0;
   border-radius: 10px;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 40px;
+  padding: 8px 14px;
   background: #6f3fa0;
   color: #fff;
   font-weight: 700;
@@ -127,8 +127,8 @@ textarea { min-height: 84px; resize: vertical; }
 .secondary {
   border: 1px solid #d8d0de;
   border-radius: 10px;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 40px;
+  padding: 8px 14px;
   background: #fff;
   color: #342b38;
 }
@@ -136,12 +136,14 @@ textarea { min-height: 84px; resize: vertical; }
 .dashboard {
   display: grid;
   grid-template-columns: minmax(0, 1.75fr) minmax(330px, .75fr);
+  grid-template-rows: auto max-content minmax(0, 1fr);
   grid-template-areas:
     "header header"
     "daily summary"
     "daily history";
-  gap: 18px 22px;
+  gap: 12px 18px;
   align-items: start;
+  font-size: 14px;
 }
 
 .dashboardHeader {
@@ -149,40 +151,47 @@ textarea { min-height: 84px; resize: vertical; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  padding: 0 2px 4px;
+  gap: 18px;
+  padding: 0 2px;
 }
 
 .dashboardHeader > div {
   display: flex;
   align-items: baseline;
-  gap: 18px;
+  gap: 14px;
   min-width: 0;
 }
 
 .greeting {
   margin: 0;
-  font-size: clamp(27px, 3vw, 36px);
-  line-height: 1.1;
+  font-size: clamp(23px, 2.5vw, 29px);
+  line-height: 1.05;
 }
 
 .subtleAction {
   flex: 0 0 auto;
   color: #786d7d;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .monthControl {
-  width: 230px;
-  flex: 0 0 230px;
+  width: 210px;
+  flex: 0 0 210px;
   color: #5f5663;
-  font-size: 13px;
+  font-size: 12px;
+}
+
+.dashboard input,
+.dashboard select,
+.dashboard textarea {
+  min-height: 38px;
+  padding: 7px 10px;
 }
 
 .dailyCard {
   grid-area: daily;
-  padding: 22px 24px;
+  padding: 14px 17px;
   min-width: 0;
 }
 
@@ -193,58 +202,63 @@ textarea { min-height: 84px; resize: vertical; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sectionHeading {
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
-.sectionHeading h2,
+.sectionHeading h2 {
+  margin-bottom: 0;
+  font-size: 21px;
+}
+
 .summaryHeading h2 {
   margin-bottom: 0;
 }
 
 .eyebrow {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: #746b79;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .04em;
 }
 
 .compactButton {
-  min-height: 38px;
-  padding: 8px 12px;
-  font-size: 14px;
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 12px;
 }
 
 .dailyForm {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
 .dailyForm > label:first-child {
-  max-width: 360px;
+  max-width: 320px;
 }
 
 .fieldTitle {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
+  font-size: 15px;
   font-weight: 800;
 }
 
 .helperText {
-  margin: -2px 0 10px;
+  margin: -1px 0 5px;
   color: #756d78;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.3;
 }
 
 .choiceGrid {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 
 .statusChoices {
@@ -259,10 +273,11 @@ textarea { min-height: 84px; resize: vertical; }
 .choiceButton {
   border: 1px solid #d8d0de;
   border-radius: 999px;
-  min-height: 42px;
-  padding: 9px 14px;
+  min-height: 36px;
+  padding: 6px 11px;
   background: #fff;
   color: #433a47;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -276,30 +291,42 @@ textarea { min-height: 84px; resize: vertical; }
 .selectedStores {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
 }
 
 .storeEntry {
   min-width: 0;
   border: 1px solid #e8e1ec;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 10px;
   background: #fcfbfd;
 }
 
 .storeEntryHeader {
-  margin-bottom: 12px;
+  margin-bottom: 7px;
+  align-items: flex-start;
+}
+
+.storeEntryHeader strong {
+  font-size: 14px;
+  line-height: 1.2;
 }
 
 .storeEntryHeader span {
   color: #6f3fa0;
+  font-size: 14px;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .storeFields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 7px;
+}
+
+.storeFields label {
+  font-size: 13px;
 }
 
 .storeEntry > .helperText {
@@ -309,102 +336,108 @@ textarea { min-height: 84px; resize: vertical; }
 .dailyTotal {
   grid-column: 1 / -1;
   align-items: center;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 8px 11px;
+  border-radius: 10px;
   background: #f4eef8;
 }
 
 .dailyTotal span {
   color: #665d6a;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .dailyTotal strong {
+  font-size: 13px;
   text-align: right;
 }
 
 .vacationBox {
   max-width: 720px;
-  padding: 14px;
+  padding: 10px;
   border: 1px solid #e8e1ec;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #fcfbfd;
 }
 
 .vacationRange {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .saveButton {
-  width: min(100%, 380px);
+  width: min(100%, 330px);
+  min-height: 38px;
   justify-self: end;
+  font-size: 13px;
 }
 
 .message {
-  margin: 14px 0 0;
-  padding: 10px 12px;
-  border-radius: 10px;
+  margin: 9px 0 0;
+  padding: 8px 10px;
+  border-radius: 9px;
   background: #f4eef8;
+  font-size: 13px;
 }
 
 .summarySection {
   grid-area: summary;
   margin: 0;
-  padding: 18px;
+  padding: 13px;
   border: 1px solid #e5dfea;
-  border-radius: 18px;
+  border-radius: 15px;
   background: #fff;
 }
 
 .summaryHeading {
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 
 .summaryHeading h2 {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 7px;
 }
 
 .metric {
   background: #fcfbfd;
   border: 1px solid #e5dfea;
-  border-radius: 14px;
-  padding: 13px;
+  border-radius: 11px;
+  padding: 8px 9px;
 }
 
 .metric span {
   display: block;
   color: #6d6671;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .metric strong {
   display: block;
-  margin-top: 4px;
-  font-size: 21px;
+  margin-top: 2px;
+  font-size: 18px;
 }
 
 .prize {
-  margin-top: 10px;
-  padding: 11px 12px;
-  border-radius: 12px;
+  margin-top: 7px;
+  padding: 8px 9px;
+  border-radius: 10px;
   background: #f4eef8;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .historySection {
   grid-area: history;
   margin: 0;
   min-width: 0;
+  align-self: start;
 }
 
 .historyToggle {
@@ -412,70 +445,73 @@ textarea { min-height: 84px; resize: vertical; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   border: 1px solid #e5dfea;
-  border-radius: 14px;
-  padding: 14px 16px;
+  border-radius: 12px;
+  padding: 10px 12px;
   background: #fff;
   color: #342b38;
+  font-size: 14px;
   font-weight: 800;
   text-align: left;
 }
 
 .historyToggle span:last-child {
   color: #6f3fa0;
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1;
 }
 
 .historyPanel {
-  margin-top: 10px;
-  padding: 12px;
+  margin-top: 7px;
+  padding: 9px;
   border: 1px solid #e5dfea;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #fff;
 }
 
 .history {
   display: grid;
-  gap: 8px;
-  max-height: 520px;
+  gap: 6px;
+  max-height: 360px;
   overflow-y: auto;
 }
 
 .historyItem {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(100px, auto) 1fr;
+  grid-template-columns: minmax(90px, auto) 1fr;
   align-items: center;
-  gap: 12px;
+  gap: 9px;
   border: 1px solid #ece6ef;
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 8px 9px;
   background: #fff;
   color: #342b38;
+  font-size: 12px;
   text-align: left;
 }
 
 .historyItem > div {
   display: grid;
-  gap: 3px;
+  gap: 2px;
 }
 
 .historyItem > div span {
   color: #736a77;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .historySummary {
   color: #5e5662;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 
 @media (max-width: 1050px) {
   .dashboard {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     grid-template-areas:
       "header"
       "daily"
@@ -499,6 +535,10 @@ textarea { min-height: 84px; resize: vertical; }
     padding-top: 16px;
   }
 
+  .dashboard {
+    font-size: 16px;
+  }
+
   .dashboardHeader {
     align-items: stretch;
   }
@@ -507,18 +547,42 @@ textarea { min-height: 84px; resize: vertical; }
     display: block;
   }
 
+  .greeting {
+    font-size: clamp(24px, 5vw, 34px);
+  }
+
   .subtleAction {
     display: inline-block;
     margin-top: 6px;
+    font-size: 14px;
   }
 
   .monthControl {
     width: 180px;
     flex-basis: 180px;
+    font-size: 13px;
   }
 
   .dailyCard {
     padding: 18px 14px;
+  }
+
+  .dailyForm {
+    gap: 18px;
+  }
+
+  .fieldTitle {
+    font-size: 16px;
+  }
+
+  .helperText {
+    font-size: 13px;
+  }
+
+  .choiceButton {
+    min-height: 42px;
+    padding: 9px 14px;
+    font-size: 16px;
   }
 
   .statusChoices {
@@ -527,6 +591,10 @@ textarea { min-height: 84px; resize: vertical; }
 
   .selectedStores {
     grid-template-columns: 1fr;
+  }
+
+  .storeEntry {
+    padding: 14px;
   }
 
   .summaryGrid {
