@@ -1,0 +1,21 @@
+.storeFields label:first-child {
+  font-size: 0;
+}
+
+.storeFields label:first-child::before {
+  content: "Qtd. vendas";
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.storeFields label:first-child input {
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .storeFields label:first-child::before,
+  .storeFields label:first-child input {
+    font-size: 16px;
+  }
+}
