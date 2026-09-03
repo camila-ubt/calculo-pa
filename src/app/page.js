@@ -53,7 +53,13 @@ export default function Home() {
   const [modoAuth, setModoAuth] = useState("entrar");
   const [recuperacaoSenha, setRecuperacaoSenha] = useState(false);
   const [login, setLogin] = useState({ email: "", senha: "" });
-  const [cadastro, setCadastro] = useState({ nome: "", email: "", senha: "", confirmarSenha: "" });
+  const [cadastro, setCadastro] = useState({
+    nome: "",
+    numeroAthos: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+  });
   const [novaSenha, setNovaSenha] = useState({ senha: "", confirmarSenha: "" });
   const [mes, setMes] = useState(hojeLocal().slice(0, 7));
   const [lojas, setLojas] = useState([]);
@@ -102,7 +108,7 @@ export default function Home() {
   async function carregarPerfil(id) {
     const { data, error } = await supabase
       .from("usuarios_pa")
-      .select("id,nome,tipo_usuario,ativo")
+      .select("id,nome,numero_athos,tipo_usuario,ativo")
       .eq("id", id)
       .single();
 
@@ -170,6 +176,11 @@ export default function Home() {
     evento.preventDefault();
     setMensagem("");
 
+    if (!cadastro.numeroAthos.trim()) {
+      setMensagem("Informe seu número de vendedora no Athos.");
+      return;
+    }
+
     if (cadastro.senha.length < 6) {
       setMensagem("A senha precisa ter pelo menos 6 caracteres.");
       return;
@@ -185,18 +196,31 @@ export default function Home() {
       email: cadastro.email.trim(),
       password: cadastro.senha,
       options: {
-        data: { nome: cadastro.nome.trim() },
+        data: {
+          nome: cadastro.nome.trim(),
+          numero_athos: cadastro.numeroAthos.trim(),
+        },
         emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
       },
     });
 
     if (error) {
-      setMensagem(error.message.includes("already") ? "Já existe uma conta com este e-mail." : error.message);
+      setMensagem(
+        error.message.includes("already")
+          ? "Já existe uma conta com este e-mail."
+          : error.message
+      );
       setProcessandoAuth(false);
       return;
     }
 
-    setCadastro({ nome: "", email: "", senha: "", confirmarSenha: "" });
+    setCadastro({
+      nome: "",
+      numeroAthos: "",
+      email: "",
+      senha: "",
+      confirmarSenha: "",
+    });
 
     if (data.session) {
       setMensagem("Conta criada com sucesso.");
@@ -484,6 +508,16 @@ export default function Home() {
                 />
               </label>
               <label>
+                Número de vendedora no Athos
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  value={cadastro.numeroAthos}
+                  onChange={(e) => setCadastro({ ...cadastro, numeroAthos: e.target.value })}
+                />
+              </label>
+              <label>
                 E-mail
                 <input
                   type="email"
@@ -572,7 +606,9 @@ export default function Home() {
     <main>
       <header className="header">
         <div>
-          <p className="muted">Olá, {perfil.nome}</p>
+          <p className="muted">
+            Olá, {perfil.nome}{perfil.numero_athos ? ` · Athos ${perfil.numero_athos}` : ""}
+          </p>
           <h1>Meu PA</h1>
         </div>
         <div className="headerActions">
