@@ -13,9 +13,23 @@
   font-size: 13px;
 }
 
+.statusChoices {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 @media (max-width: 760px) {
   .storeFields label:first-child::before,
   .storeFields label:first-child input {
     font-size: 16px;
+  }
+
+  .statusChoices {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .statusChoices {
+    grid-template-columns: 1fr;
   }
 }
