@@ -17,8 +17,9 @@ function fimMes(mes) {
   return `${ano}-${String(numeroMes).padStart(2, "0")}-${String(new Date(ano, numeroMes, 0).getDate()).padStart(2, "0")}`;
 }
 
-function mesFechado(mes) {
-  return mes < hojeLocal().slice(0, 7);
+function ultimoDiaDoMesPreenchido(mes, dias) {
+  const ultimoDia = fimMes(mes);
+  return dias.some((dia) => dia.data === ultimoDia);
 }
 
 function pa(pecas, vendas) {
@@ -26,8 +27,8 @@ function pa(pecas, vendas) {
   return pecas / vendas;
 }
 
-function premioDoMes(valorPa, diasValidos, fechado) {
-  if (!fechado) return "A premiação aparece após o fechamento do mês.";
+function premioDoMes(valorPa, diasValidos, ultimoDiaPreenchido) {
+  if (!ultimoDiaPreenchido) return "A premiação aparece após preencher o último dia do mês.";
   if (diasValidos < 15) return "Sem premiação: mínimo de 15 dias trabalhados não atingido.";
   if (valorPa >= 2.6) return "Premiação: R$ 150 em peças";
   if (valorPa >= 2.2) return "Premiação: R$ 100 em peças";
@@ -740,6 +741,7 @@ export default function Home() {
 
   const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
   const editandoOutroDia = form.data !== hojeLocal();
+  const premiacaoLiberada = ultimoDiaDoMesPreenchido(mes, dias);
 
   return (
     <main className="dashboard">
@@ -935,7 +937,7 @@ export default function Home() {
           <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
           <div className="metric"><span>PA</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
         </div>
-        <div className="prize">{premioDoMes(resumoMes.pa, resumoMes.diasValidos, mesFechado(mes))}</div>
+        <div className="prize">{premioDoMes(resumoMes.pa, resumoMes.diasValidos, premiacaoLiberada)}</div>
       </section>
 
       <section className="historySection">
