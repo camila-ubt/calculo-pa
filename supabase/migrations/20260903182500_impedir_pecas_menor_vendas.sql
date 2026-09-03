@@ -20,3 +20,29 @@ alter table public.lancamentos_pa
 alter table public.lancamentos_pa
   add constraint lancamentos_pa_pecas_maior_igual_vendas
   check (pecas >= vendas);
+
+-- Retorna uma mensagem amigável antes da constraint caso algum cliente
+-- tente gravar um lançamento inválido diretamente no banco.
+create or replace function public.validar_pecas_maior_igual_vendas()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if new.pecas < new.vendas then
+    raise exception 'A quantidade de peças deve ser igual ou maior que a quantidade de vendas.'
+      using errcode = '23514';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists validar_pecas_maior_igual_vendas_trigger
+on public.lancamentos_pa;
+
+create trigger validar_pecas_maior_igual_vendas_trigger
+before insert or update of vendas, pecas
+on public.lancamentos_pa
+for each row
+execute function public.validar_pecas_maior_igual_vendas();
