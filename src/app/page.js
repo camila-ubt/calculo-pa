@@ -488,8 +488,9 @@ export default function Home() {
       const sucesso = await salvarFerias();
 
       if (sucesso) {
-        await carregarDados();
-        if (form.data !== hojeLocal()) voltarParaHoje();
+        setForm(formularioVazio(lojas, hojeLocal()));
+        if (mes !== hojeLocal().slice(0, 7)) setMes(hojeLocal().slice(0, 7));
+        else await carregarDados();
         setMensagem(`Férias registradas de ${formatarData(inicioFerias)} a ${formatarData(fimFerias)}.`);
       }
 
