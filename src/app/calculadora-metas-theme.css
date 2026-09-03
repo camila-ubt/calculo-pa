@@ -1,0 +1,275 @@
+:root {
+  --wine: #7b2948;
+  --wine-dark: #54192f;
+  --rose: #c66b89;
+  --rose-light: #f7e8ed;
+  --cream: #fffaf6;
+  --paper: #ffffff;
+  --ink: #2e2025;
+  --muted: #74666b;
+  --line: #eadde1;
+  --shadow: 0 18px 50px rgba(87, 29, 51, 0.09);
+}
+
+body {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 10% 5%, rgba(198, 107, 137, 0.15), transparent 28rem),
+    linear-gradient(180deg, #fff8f4 0, #f9f4f1 100%);
+  font-family: "DM Sans", sans-serif;
+}
+
+h1,
+.loginCard h1,
+.greeting {
+  font-family: "Playfair Display", serif;
+}
+
+.greeting {
+  color: var(--wine-dark);
+  font-size: clamp(22px, 2.1vw, 28px);
+  letter-spacing: -0.01em;
+}
+
+.muted,
+.helperText,
+.eyebrow,
+.metric span,
+.historyItem > div span,
+.historySummary,
+.dailyTotal span {
+  color: var(--muted);
+}
+
+.card,
+.summarySection,
+.historyToggle,
+.historyPanel {
+  border-color: rgba(123, 41, 72, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.card,
+.summarySection {
+  border-radius: 22px;
+}
+
+.authBrand {
+  background: var(--wine);
+}
+
+.textButton,
+.subtleAction,
+.storeEntryHeader span,
+.historyToggle span:last-child {
+  color: var(--wine);
+}
+
+input,
+select,
+textarea,
+.secondary {
+  border-color: #dacbd0;
+  color: var(--ink);
+  background: white;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 4px rgba(198, 107, 137, 0.13);
+}
+
+.primary {
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--wine), #9d3f62);
+  box-shadow: 0 10px 24px rgba(123, 41, 72, 0.22);
+}
+
+.secondary {
+  color: var(--wine);
+  background: var(--rose-light);
+}
+
+.monthControl {
+  color: var(--wine);
+  font-weight: 700;
+}
+
+.monthControl input {
+  border-color: rgba(123, 41, 72, 0.14);
+  border-radius: 999px;
+  color: var(--wine);
+  background: rgba(255, 255, 255, 0.76);
+  font-weight: 700;
+}
+
+.dailyCard {
+  position: relative;
+}
+
+.sectionHeading {
+  min-height: 48px;
+  padding-right: 205px;
+}
+
+.sectionHeading h2 {
+  color: var(--wine-dark);
+}
+
+.eyebrow {
+  color: var(--wine);
+  letter-spacing: 0.12em;
+}
+
+.dailyForm > label:first-child {
+  position: absolute;
+  top: 15px;
+  right: 17px;
+  z-index: 2;
+  width: 185px;
+  max-width: 185px;
+  font-size: 0;
+}
+
+.dailyForm > label:first-child input {
+  min-height: 38px;
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: var(--wine);
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.dailyForm > .helperText:first-of-type {
+  display: none;
+}
+
+.sectionHeading .compactButton {
+  margin-right: 195px;
+}
+
+.choiceButton {
+  border-color: var(--line);
+  color: var(--wine-dark);
+  background: var(--paper);
+}
+
+.choiceButton:hover {
+  border-color: rgba(123, 41, 72, 0.28);
+  background: var(--cream);
+}
+
+.choiceButton.active {
+  border-color: var(--wine);
+  color: white;
+  background: linear-gradient(135deg, var(--wine), #9d3f62);
+  box-shadow: 0 7px 18px rgba(123, 41, 72, 0.18);
+}
+
+.storeEntry,
+.metric,
+.vacationBox {
+  border-color: var(--line);
+  background: var(--cream);
+}
+
+.storeEntry {
+  border-radius: 16px;
+}
+
+.storeEntryHeader strong,
+.fieldTitle,
+.summaryHeading h2,
+.historyToggle {
+  color: var(--wine-dark);
+}
+
+.dailyTotal,
+.prize,
+.message {
+  color: var(--wine-dark);
+  background: var(--rose-light);
+}
+
+.dailyTotal {
+  border: 1px solid rgba(123, 41, 72, 0.08);
+}
+
+.summarySection {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.metric {
+  border-radius: 14px;
+}
+
+.metric strong {
+  color: var(--wine-dark);
+}
+
+.prize {
+  border: 1px solid rgba(123, 41, 72, 0.08);
+}
+
+.historyToggle {
+  border-radius: 16px;
+}
+
+.historyPanel {
+  border-radius: 16px;
+}
+
+.historyItem {
+  border-color: var(--line);
+  color: var(--ink);
+  background: var(--cream);
+}
+
+.loginCard {
+  border-color: rgba(123, 41, 72, 0.1);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.loginCard h1 {
+  color: var(--wine-dark);
+}
+
+.formStack label:has(input[type="number"][min="1"][max="18"])::after {
+  border-color: var(--line);
+  color: var(--muted);
+  background: var(--rose-light);
+}
+
+@media (max-width: 760px) {
+  .sectionHeading {
+    min-height: 0;
+    padding-right: 0;
+  }
+
+  .sectionHeading .compactButton {
+    margin-right: 0;
+  }
+
+  .dailyForm > label:first-child {
+    position: static;
+    width: auto;
+    max-width: none;
+    font-size: inherit;
+  }
+
+  .dailyForm > label:first-child input {
+    border-radius: 11px;
+    font-size: inherit;
+  }
+
+  .dailyForm > .helperText:first-of-type {
+    display: block;
+  }
+}
