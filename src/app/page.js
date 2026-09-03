@@ -78,12 +78,19 @@ function formularioVazio(lojas, data = hojeLocal()) {
   };
 }
 
+function normalizarSituacao(situacao) {
+  if (["folga", "falta", "atestado"].includes(situacao)) return "nao_trabalhou";
+  return situacao;
+}
+
 function formularioDoDia(dia, lojas) {
   const registros = dia?.lancamentos_pa || [];
+  const situacao = normalizarSituacao(dia.situacao);
+
   return {
     data: dia.data,
-    situacao: dia.situacao,
-    lojasSelecionadas: dia.situacao === "trabalhado"
+    situacao,
+    lojasSelecionadas: situacao === "trabalhado"
       ? registros.map((item) => String(item.loja_id))
       : [],
     lojas: mapaLojas(lojas, registros),
@@ -94,9 +101,7 @@ function formularioDoDia(dia, lojas) {
 
 const situacoes = [
   ["trabalhado", "Trabalhando"],
-  ["folga", "Folga"],
-  ["falta", "Falta"],
-  ["atestado", "Atestado"],
+  ["nao_trabalhou", "Não trabalhei"],
   ["ferias", "Férias"],
 ];
 
@@ -928,7 +933,8 @@ export default function Home() {
                 {dias.map((dia) => {
                   const vendas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.vendas || 0), 0);
                   const pecas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.pecas || 0), 0);
-                  const situacao = situacoes.find(([valor]) => valor === dia.situacao)?.[1] || dia.situacao;
+                  const situacaoNormalizada = normalizarSituacao(dia.situacao);
+                  const situacao = situacoes.find(([valor]) => valor === situacaoNormalizada)?.[1] || situacaoNormalizada;
 
                   return (
                     <button className="historyItem" type="button" key={dia.id} onClick={() => abrirDia(dia)}>
