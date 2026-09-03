@@ -34,8 +34,66 @@ function premioDoMes(valorPa, diasValidos, fechado) {
   return "Sem premiação neste mês.";
 }
 
+function formatarData(data) {
+  if (!data) return "";
+  return data.split("-").reverse().join("/");
+}
+
+function datasEntre(inicio, fim) {
+  if (!inicio || !fim || fim < inicio) return [];
+
+  const [anoInicio, mesInicio, diaInicio] = inicio.split("-").map(Number);
+  const [anoFim, mesFim, diaFim] = fim.split("-").map(Number);
+  const atual = new Date(Date.UTC(anoInicio, mesInicio - 1, diaInicio));
+  const limite = new Date(Date.UTC(anoFim, mesFim - 1, diaFim));
+  const datas = [];
+
+  while (atual <= limite) {
+    datas.push(atual.toISOString().slice(0, 10));
+    atual.setUTCDate(atual.getUTCDate() + 1);
+  }
+
+  return datas;
+}
+
+function mapaLojas(lojas, registros = []) {
+  return lojas.reduce((acc, loja) => {
+    const registro = registros.find((item) => String(item.loja_id) === String(loja.id));
+    acc[String(loja.id)] = {
+      vendas: registro?.vendas ?? "",
+      pecas: registro?.pecas ?? "",
+    };
+    return acc;
+  }, {});
+}
+
+function formularioVazio(lojas, data = hojeLocal()) {
+  return {
+    data,
+    situacao: "trabalhado",
+    lojasSelecionadas: [],
+    lojas: mapaLojas(lojas),
+    feriasInicio: data,
+    feriasFim: data,
+  };
+}
+
+function formularioDoDia(dia, lojas) {
+  const registros = dia?.lancamentos_pa || [];
+  return {
+    data: dia.data,
+    situacao: dia.situacao,
+    lojasSelecionadas: dia.situacao === "trabalhado"
+      ? registros.map((item) => String(item.loja_id))
+      : [],
+    lojas: mapaLojas(lojas, registros),
+    feriasInicio: dia.data,
+    feriasFim: dia.data,
+  };
+}
+
 const situacoes = [
-  ["trabalhado", "Trabalhado"],
+  ["trabalhado", "Trabalhando"],
   ["folga", "Folga"],
   ["falta", "Falta"],
   ["atestado", "Atestado"],
@@ -64,12 +122,8 @@ export default function Home() {
   const [mes, setMes] = useState(hojeLocal().slice(0, 7));
   const [lojas, setLojas] = useState([]);
   const [dias, setDias] = useState([]);
-  const [form, setForm] = useState({
-    data: hojeLocal(),
-    situacao: "trabalhado",
-    observacao: "",
-    lojas: {},
-  });
+  const [historicoAberto, setHistoricoAberto] = useState(false);
+  const [form, setForm] = useState(formularioVazio([]));
 
   useEffect(() => {
     async function iniciar() {
@@ -140,16 +194,25 @@ export default function Home() {
     if (erro) setMensagem(erro.message);
 
     const lojasAtivas = lojasResp.data || [];
+    const diasDoMes = diasResp.data || [];
     setLojas(lojasAtivas);
-    setDias(diasResp.data || []);
+    setDias(diasDoMes);
 
-    setForm((atual) => ({
-      ...atual,
-      lojas: lojasAtivas.reduce((acc, loja) => {
-        acc[loja.id] = atual.lojas[loja.id] || { vendas: "", pecas: "" };
-        return acc;
-      }, {}),
-    }));
+    const hoje = hojeLocal();
+    setForm((atual) => {
+      if (atual.data !== hoje) {
+        const diaSelecionado = diasDoMes.find((dia) => dia.data === atual.data);
+        return diaSelecionado
+          ? formularioDoDia(diaSelecionado, lojasAtivas)
+          : formularioVazio(lojasAtivas, atual.data);
+      }
+
+      if (mes !== hoje.slice(0, 7)) return formularioVazio(lojasAtivas, hoje);
+
+      const diaHoje = diasDoMes.find((dia) => dia.data === hoje);
+      return diaHoje ? formularioDoDia(diaHoje, lojasAtivas) : formularioVazio(lojasAtivas, hoje);
+    });
+
     setCarregando(false);
   }
 
@@ -296,37 +359,129 @@ export default function Home() {
     await supabase.auth.signOut();
   }
 
+  function selecionarData(data) {
+    if (!data) return;
+
+    const hoje = hojeLocal();
+    if (data > hoje) {
+      setMensagem("Não é possível fazer lançamentos em datas futuras.");
+      return;
+    }
+
+    setMensagem("");
+    const diaExistente = dias.find((dia) => dia.data === data);
+    setForm(diaExistente ? formularioDoDia(diaExistente, lojas) : formularioVazio(lojas, data));
+
+    const mesDaData = data.slice(0, 7);
+    if (mesDaData !== mes) setMes(mesDaData);
+  }
+
+  function selecionarSituacao(situacao) {
+    setMensagem("");
+    setForm((atual) => ({
+      ...atual,
+      situacao,
+      lojasSelecionadas: situacao === "trabalhado" ? atual.lojasSelecionadas : [],
+      feriasInicio: situacao === "ferias" ? atual.data : atual.feriasInicio,
+      feriasFim: situacao === "ferias" ? atual.data : atual.feriasFim,
+    }));
+  }
+
+  function alternarLoja(lojaId) {
+    const id = String(lojaId);
+    setForm((atual) => {
+      const selecionada = atual.lojasSelecionadas.includes(id);
+      return {
+        ...atual,
+        lojasSelecionadas: selecionada
+          ? atual.lojasSelecionadas.filter((item) => item !== id)
+          : [...atual.lojasSelecionadas, id],
+      };
+    });
+  }
+
   function alterarLoja(lojaId, campo, valor) {
-    const numero = valor === "" ? "" : Math.max(0, Number.parseInt(valor, 10) || 0);
+    const id = String(lojaId);
+    const somenteDigitos = String(valor).replace(/\D/g, "").slice(0, 3);
+    const numero = somenteDigitos === "" ? "" : Number(somenteDigitos);
+
     setForm((atual) => ({
       ...atual,
       lojas: {
         ...atual.lojas,
-        [lojaId]: {
-          ...(atual.lojas[lojaId] || { vendas: "", pecas: "" }),
+        [id]: {
+          ...(atual.lojas[id] || { vendas: "", pecas: "" }),
           [campo]: numero,
         },
       },
     }));
   }
 
-  function abrirDia(dia) {
-    const valores = lojas.reduce((acc, loja) => {
-      const registro = (dia.lancamentos_pa || []).find((item) => Number(item.loja_id) === Number(loja.id));
-      acc[loja.id] = {
-        vendas: registro?.vendas ?? "",
-        pecas: registro?.pecas ?? "",
-      };
-      return acc;
-    }, {});
+  async function carregarHoje() {
+    const hoje = hojeLocal();
+    const { data: diaHoje } = await supabase
+      .from("dias_pa")
+      .select("id,data,situacao,observacao,lancamentos_pa(id,loja_id,vendas,pecas)")
+      .eq("usuario_id", sessao.user.id)
+      .eq("data", hoje)
+      .maybeSingle();
 
-    setForm({
-      data: dia.data,
-      situacao: dia.situacao,
-      observacao: dia.observacao || "",
-      lojas: valores,
-    });
+    setForm(diaHoje ? formularioDoDia(diaHoje, lojas) : formularioVazio(lojas, hoje));
+    if (mes !== hoje.slice(0, 7)) setMes(hoje.slice(0, 7));
+    else await carregarDados();
+  }
+
+  async function voltarParaHoje() {
+    setMensagem("");
+    await carregarHoje();
+  }
+
+  function abrirDia(dia) {
+    setForm(formularioDoDia(dia, lojas));
+    setHistoricoAberto(false);
+    setMensagem("");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function salvarFerias() {
+    const periodo = datasEntre(form.feriasInicio, form.feriasFim);
+
+    if (periodo.length === 0) {
+      setMensagem("Confira as datas de início e fim das férias.");
+      return false;
+    }
+
+    const registros = periodo.map((data) => ({
+      usuario_id: sessao.user.id,
+      data,
+      situacao: "ferias",
+      observacao: null,
+    }));
+
+    const { data: diasSalvos, error } = await supabase
+      .from("dias_pa")
+      .upsert(registros, { onConflict: "usuario_id,data" })
+      .select("id");
+
+    if (error) {
+      setMensagem(error.message);
+      return false;
+    }
+
+    const ids = (diasSalvos || []).map((dia) => dia.id);
+    if (ids.length > 0) {
+      const { error: erroLimpeza } = await supabase
+        .from("lancamentos_pa")
+        .delete()
+        .in("dia_id", ids);
+
+      if (erroLimpeza) {
+        setMensagem(erroLimpeza.message);
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async function salvarDia(evento) {
@@ -334,6 +489,50 @@ export default function Home() {
     setSalvando(true);
     setMensagem("");
 
+    if (form.data > hojeLocal()) {
+      setMensagem("Não é possível fazer lançamentos em datas futuras.");
+      setSalvando(false);
+      return;
+    }
+
+    if (form.situacao === "ferias") {
+      const inicioFerias = form.feriasInicio;
+      const fimFerias = form.feriasFim;
+      const sucesso = await salvarFerias();
+
+      if (sucesso) {
+        await carregarHoje();
+        setMensagem(`Férias registradas de ${formatarData(inicioFerias)} a ${formatarData(fimFerias)}.`);
+      }
+
+      setSalvando(false);
+      return;
+    }
+
+    if (form.situacao === "trabalhado" && form.lojasSelecionadas.length === 0) {
+      setMensagem("Selecione pelo menos uma loja.");
+      setSalvando(false);
+      return;
+    }
+
+    if (form.situacao === "trabalhado") {
+      const valorInvalido = form.lojasSelecionadas.some((lojaId) => {
+        const valores = form.lojas[lojaId] || {};
+        return [valores.vendas, valores.pecas].some((valor) => {
+          if (valor === "" || valor == null) return false;
+          const numero = Number(valor);
+          return !Number.isInteger(numero) || numero < 0 || numero > 999;
+        });
+      });
+
+      if (valorInvalido) {
+        setMensagem("Vendas e peças devem ser números inteiros de 0 a 999.");
+        setSalvando(false);
+        return;
+      }
+    }
+
+    const dataSalva = form.data;
     const { data: diaSalvo, error: erroDia } = await supabase
       .from("dias_pa")
       .upsert(
@@ -341,7 +540,7 @@ export default function Home() {
           usuario_id: sessao.user.id,
           data: form.data,
           situacao: form.situacao,
-          observacao: form.observacao.trim() || null,
+          observacao: null,
         },
         { onConflict: "usuario_id,data" }
       )
@@ -354,25 +553,27 @@ export default function Home() {
       return;
     }
 
+    const { error: erroLimpeza } = await supabase
+      .from("lancamentos_pa")
+      .delete()
+      .eq("dia_id", diaSalvo.id);
+
+    if (erroLimpeza) {
+      setMensagem(erroLimpeza.message);
+      setSalvando(false);
+      return;
+    }
+
     if (form.situacao === "trabalhado") {
-      const registros = lojas.map((loja) => ({
+      const registros = form.lojasSelecionadas.map((lojaId) => ({
         dia_id: diaSalvo.id,
-        loja_id: loja.id,
-        vendas: Number(form.lojas[loja.id]?.vendas || 0),
-        pecas: Number(form.lojas[loja.id]?.pecas || 0),
+        loja_id: Number(lojaId),
+        vendas: Number(form.lojas[lojaId]?.vendas || 0),
+        pecas: Number(form.lojas[lojaId]?.pecas || 0),
       }));
 
-      const { error } = await supabase
-        .from("lancamentos_pa")
-        .upsert(registros, { onConflict: "dia_id,loja_id" });
+      const { error } = await supabase.from("lancamentos_pa").insert(registros);
 
-      if (error) {
-        setMensagem(error.message);
-        setSalvando(false);
-        return;
-      }
-    } else {
-      const { error } = await supabase.from("lancamentos_pa").delete().eq("dia_id", diaSalvo.id);
       if (error) {
         setMensagem(error.message);
         setSalvando(false);
@@ -380,16 +581,19 @@ export default function Home() {
       }
     }
 
+    if (dataSalva !== hojeLocal()) await carregarHoje();
+    else await carregarDados();
     setMensagem("Lançamento salvo com sucesso.");
-    await carregarDados();
     setSalvando(false);
   }
 
   const totaisForm = useMemo(() => {
     if (form.situacao !== "trabalhado") return { vendas: 0, pecas: 0, pa: 0 };
-    const valores = Object.values(form.lojas);
+
+    const valores = form.lojasSelecionadas.map((lojaId) => form.lojas[lojaId] || { vendas: 0, pecas: 0 });
     const vendas = valores.reduce((soma, item) => soma + Number(item.vendas || 0), 0);
     const pecas = valores.reduce((soma, item) => soma + Number(item.pecas || 0), 0);
+
     return { vendas, pecas, pa: pa(pecas, vendas) };
   }, [form]);
 
@@ -476,7 +680,14 @@ export default function Home() {
           )}
 
           <div className="authActions">
-            {modoAuth === "entrar" ? <><button className="textButton" type="button" onClick={() => trocarModoAuth("cadastro")}>Criar conta</button><button className="textButton" type="button" onClick={() => trocarModoAuth("recuperar")}>Esqueci minha senha</button></> : <button className="textButton" type="button" onClick={() => trocarModoAuth("entrar")}>Voltar para o login</button>}
+            {modoAuth === "entrar" ? (
+              <>
+                <button className="textButton" type="button" onClick={() => trocarModoAuth("cadastro")}>Criar conta</button>
+                <button className="textButton" type="button" onClick={() => trocarModoAuth("recuperar")}>Esqueci minha senha</button>
+              </>
+            ) : (
+              <button className="textButton" type="button" onClick={() => trocarModoAuth("entrar")}>Voltar para o login</button>
+            )}
           </div>
 
           {mensagem && <p className="message">{mensagem}</p>}
@@ -486,37 +697,258 @@ export default function Home() {
   }
 
   if (!perfil) {
-    return <main><section className="card"><h1>Acesso pendente</h1><p>{mensagem || "Seu usuário existe, mas ainda não está habilitado para o Cálculo PA."}</p><button className="secondary" type="button" onClick={sair}>Sair</button></section></main>;
+    return (
+      <main>
+        <section className="card">
+          <h1>Acesso pendente</h1>
+          <p>{mensagem || "Seu usuário existe, mas ainda não está habilitado para o Cálculo PA."}</p>
+          <button className="secondary" type="button" onClick={sair}>Sair</button>
+        </section>
+      </main>
+    );
   }
 
+  if (!perfil.ativo) {
+    return (
+      <main>
+        <section className="card">
+          <h1>Acesso suspenso</h1>
+          <p>Seu acesso ao Cálculo PA está suspenso.</p>
+          <button className="secondary" type="button" onClick={sair}>Sair</button>
+        </section>
+      </main>
+    );
+  }
+
+  const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
+  const editandoOutroDia = form.data !== hojeLocal();
+
   return (
-    <main>
-      <header className="header">
-        <div><p className="muted">Olá, {perfil.nome}{perfil.numero_athos ? ` · Athos ${perfil.numero_athos}` : ""}</p><h1>Meu PA</h1></div>
-        <div className="headerActions"><label>Mês<input type="month" value={mes} onChange={(e) => setMes(e.target.value)} /></label><button className="secondary" type="button" onClick={sair}>Sair</button></div>
+    <main className="dashboard">
+      <header className="dashboardHeader">
+        <div>
+          <h1 className="greeting">
+            Olá {nomeExibicao}{perfil.numero_athos ? ` (${perfil.numero_athos})` : ""}
+          </h1>
+          <button className="textButton subtleAction" type="button" onClick={sair}>Sair</button>
+        </div>
+
+        <label className="monthControl">
+          Mês
+          <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
+        </label>
       </header>
 
-      <section className="summaryGrid" aria-label="Resumo do mês">
-        <div className="metric"><span>Dias válidos</span><strong>{resumoMes.diasValidos}</strong></div><div className="metric"><span>Vendas</span><strong>{resumoMes.vendas}</strong></div><div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div><div className="metric"><span>PA</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
+      <section className="card dailyCard">
+        <div className="sectionHeading">
+          <div>
+            <p className="eyebrow">{editandoOutroDia ? "Lançamento anterior" : "Lançamento de hoje"}</p>
+            <h2>{formatarData(form.data)}</h2>
+          </div>
+          {editandoOutroDia && (
+            <button className="secondary compactButton" type="button" onClick={voltarParaHoje}>Voltar para hoje</button>
+          )}
+        </div>
+
+        <form className="dailyForm" onSubmit={salvarDia}>
+          <label>
+            Data do lançamento
+            <input
+              type="date"
+              required
+              max={hojeLocal()}
+              value={form.data}
+              onChange={(e) => selecionarData(e.target.value)}
+            />
+          </label>
+          <p className="helperText">A data começa em hoje, mas você pode escolher dias anteriores. Datas futuras não são permitidas.</p>
+
+          <div>
+            <span className="fieldTitle">Como foi o dia?</span>
+            <div className="choiceGrid statusChoices" role="group" aria-label="Situação do dia">
+              {situacoes.map(([valor, texto]) => (
+                <button
+                  key={valor}
+                  className={`choiceButton ${form.situacao === valor ? "active" : ""}`}
+                  type="button"
+                  aria-pressed={form.situacao === valor}
+                  onClick={() => selecionarSituacao(valor)}
+                >
+                  {texto}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {form.situacao === "trabalhado" && (
+            <>
+              <div>
+                <span className="fieldTitle">Em qual loja?</span>
+                <p className="helperText">Você pode selecionar mais de uma loja no mesmo dia.</p>
+                <div className="choiceGrid storeChoices" role="group" aria-label="Lojas trabalhadas">
+                  {lojas.map((loja) => {
+                    const id = String(loja.id);
+                    const selecionada = form.lojasSelecionadas.includes(id);
+                    return (
+                      <button
+                        key={loja.id}
+                        className={`choiceButton storeChoice ${selecionada ? "active" : ""}`}
+                        type="button"
+                        aria-pressed={selecionada}
+                        onClick={() => alternarLoja(loja.id)}
+                      >
+                        {loja.sigla || loja.nome}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {form.lojasSelecionadas.length > 0 && (
+                <div className="selectedStores">
+                  {form.lojasSelecionadas.map((lojaId) => {
+                    const loja = lojas.find((item) => String(item.id) === lojaId);
+                    if (!loja) return null;
+
+                    const valores = form.lojas[lojaId] || { vendas: "", pecas: "" };
+                    const valorPa = pa(Number(valores.pecas || 0), Number(valores.vendas || 0));
+
+                    return (
+                      <div className="storeEntry" key={lojaId}>
+                        <div className="storeEntryHeader">
+                          <strong>{loja.sigla || loja.nome}</strong>
+                          <span>PA {valorPa.toFixed(2).replace(".", ",")}</span>
+                        </div>
+                        <div className="storeFields">
+                          <label>
+                            Vendas
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]{1,3}"
+                              maxLength={3}
+                              value={valores.vendas}
+                              onChange={(e) => alterarLoja(lojaId, "vendas", e.target.value)}
+                            />
+                          </label>
+                          <label>
+                            Peças
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]{1,3}"
+                              maxLength={3}
+                              value={valores.pecas}
+                              onChange={(e) => alterarLoja(lojaId, "pecas", e.target.value)}
+                            />
+                          </label>
+                        </div>
+                        <p className="helperText">Somente números inteiros, de 0 a 999.</p>
+                      </div>
+                    );
+                  })}
+
+                  <div className="dailyTotal">
+                    <span>Total do dia</span>
+                    <strong>{totaisForm.vendas} vendas · {totaisForm.pecas} peças · PA {totaisForm.pa.toFixed(2).replace(".", ",")}</strong>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {form.situacao === "ferias" && (
+            <div className="vacationBox">
+              <span className="fieldTitle">Período de férias</span>
+              <div className="vacationRange">
+                <label>
+                  Início
+                  <input
+                    type="date"
+                    required
+                    value={form.feriasInicio}
+                    onChange={(e) => setForm((atual) => ({ ...atual, feriasInicio: e.target.value }))}
+                  />
+                </label>
+                <label>
+                  Fim
+                  <input
+                    type="date"
+                    required
+                    min={form.feriasInicio || undefined}
+                    value={form.feriasFim}
+                    onChange={(e) => setForm((atual) => ({ ...atual, feriasFim: e.target.value }))}
+                  />
+                </label>
+              </div>
+              <p className="helperText">Todos os dias do período serão registrados como férias.</p>
+            </div>
+          )}
+
+          <button className="primary saveButton" type="submit" disabled={salvando}>
+            {salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
+          </button>
+        </form>
+
+        {mensagem && <p className="message">{mensagem}</p>}
       </section>
 
-      <div className="prize">{premioDoMes(resumoMes.pa, resumoMes.diasValidos, mesFechado(mes))}</div>
-      {mensagem && <p className="message">{mensagem}</p>}
+      <section className="summarySection" aria-label="Resumo do mês">
+        <div className="summaryHeading">
+          <h2>Resumo do mês</h2>
+        </div>
+        <div className="summaryGrid">
+          <div className="metric"><span>Dias válidos</span><strong>{resumoMes.diasValidos}</strong></div>
+          <div className="metric"><span>Vendas</span><strong>{resumoMes.vendas}</strong></div>
+          <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
+          <div className="metric"><span>PA</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
+        </div>
+        <div className="prize">{premioDoMes(resumoMes.pa, resumoMes.diasValidos, mesFechado(mes))}</div>
+      </section>
 
-      <div className="grid2">
-        <section className="card">
-          <h2>Lançamento diário</h2>
-          <form className="formStack" onSubmit={salvarDia}>
-            <label>Data<input type="date" required value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>
-            <label>Situação do dia<select value={form.situacao} onChange={(e) => setForm({ ...form, situacao: e.target.value })}>{situacoes.map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}</select></label>
-            {form.situacao === "trabalhado" && <div className="storeGrid">{lojas.map((loja) => { const valores = form.lojas[loja.id] || { vendas: "", pecas: "" }; const valorPa = pa(Number(valores.pecas || 0), Number(valores.vendas || 0)); return <div className="storeRow" key={loja.id}><strong className="storeName">{loja.sigla || loja.nome}</strong><label>Vendas<input type="number" min="0" step="1" value={valores.vendas} onChange={(e) => alterarLoja(loja.id, "vendas", e.target.value)} /></label><label>Peças<input type="number" min="0" step="1" value={valores.pecas} onChange={(e) => alterarLoja(loja.id, "pecas", e.target.value)} /></label><div className="paBadge" title="PA da loja">{valorPa.toFixed(2).replace(".", ",")}</div></div>; })}<p><strong>Total do dia:</strong> {totaisForm.vendas} vendas · {totaisForm.pecas} peças · PA {totaisForm.pa.toFixed(2).replace(".", ",")}</p></div>}
-            <label>Observação<textarea value={form.observacao} onChange={(e) => setForm({ ...form, observacao: e.target.value })} placeholder="Opcional" /></label>
-            <button className="primary" type="submit" disabled={salvando}>{salvando ? "Salvando..." : "Salvar lançamento"}</button>
-          </form>
-        </section>
+      <section className="historySection">
+        <button
+          className="historyToggle"
+          type="button"
+          aria-expanded={historicoAberto}
+          onClick={() => setHistoricoAberto((aberto) => !aberto)}
+        >
+          <span>Histórico do mês</span>
+          <span aria-hidden="true">{historicoAberto ? "−" : "+"}</span>
+        </button>
 
-        <section className="card"><h2>Histórico do mês</h2>{carregando ? <p>Carregando...</p> : dias.length === 0 ? <p className="muted">Nenhum lançamento neste mês.</p> : <div className="history">{dias.map((dia) => { const vendas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.vendas || 0), 0); const pecas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.pecas || 0), 0); return <button className="historyItem secondary" type="button" key={dia.id} onClick={() => abrirDia(dia)}><strong>{dia.data.split("-").reverse().join("/")}</strong><span>{situacoes.find(([valor]) => valor === dia.situacao)?.[1] || dia.situacao}</span><span>{dia.situacao === "trabalhado" ? `${vendas} vendas · ${pecas} peças · PA ${pa(pecas, vendas).toFixed(2).replace(".", ",")}` : "Não conta como dia trabalhado"}</span></button>; })}</div>}</section>
-      </div>
+        {historicoAberto && (
+          <div className="historyPanel">
+            {carregando ? (
+              <p>Carregando...</p>
+            ) : dias.length === 0 ? (
+              <p className="muted">Nenhum lançamento neste mês.</p>
+            ) : (
+              <div className="history">
+                {dias.map((dia) => {
+                  const vendas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.vendas || 0), 0);
+                  const pecas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.pecas || 0), 0);
+                  const situacao = situacoes.find(([valor]) => valor === dia.situacao)?.[1] || dia.situacao;
+
+                  return (
+                    <button className="historyItem" type="button" key={dia.id} onClick={() => abrirDia(dia)}>
+                      <div>
+                        <strong>{formatarData(dia.data)}</strong>
+                        <span>{situacao}</span>
+                      </div>
+                      <span className="historySummary">
+                        {dia.situacao === "trabalhado"
+                          ? `${vendas} vendas · ${pecas} peças · PA ${pa(pecas, vendas).toFixed(2).replace(".", ",")}`
+                          : "Não conta como dia trabalhado"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
     </main>
   );
 }
