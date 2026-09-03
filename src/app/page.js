@@ -635,7 +635,7 @@ export default function Home() {
             </label>
             <label>
               Confirmar nova senha
-              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmimarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
+              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
             </label>
             <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Alterando..." : "Salvar nova senha"}</button>
           </form>
