@@ -13,6 +13,7 @@ body {
 
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .65; }
 
 main {
   width: min(100% - 24px, 980px);
@@ -37,6 +38,38 @@ main {
   width: min(100%, 420px);
 }
 
+.authBrand {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background: #6f3fa0;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.authActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.textButton {
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  color: #6f3fa0;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 h1, h2, h3, p { margin-top: 0; }
 .muted { color: #6d6671; }
 
@@ -51,6 +84,20 @@ label {
   font-weight: 700;
 }
 
+.formStack label:has(input[type="number"][min="1"][max="18"])::after {
+  content: "Use somente números de 1 a 18. Números já cadastrados ou reservados pela administração não são aceitos.";
+  display: block;
+  margin-top: 2px;
+  padding: 9px 10px;
+  border: 1px solid #eadff2;
+  border-radius: 9px;
+  background: #f8f3fb;
+  color: #5e4d69;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
 input, select, textarea {
   width: 100%;
   min-height: 44px;
@@ -58,6 +105,11 @@ input, select, textarea {
   border-radius: 10px;
   padding: 10px 12px;
   background: #fff;
+}
+
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: 3px solid rgba(111, 63, 160, .18);
+  outline-offset: 2px;
 }
 
 textarea { min-height: 84px; resize: vertical; }
@@ -152,7 +204,7 @@ textarea { min-height: 84px; resize: vertical; }
 }
 
 .message {
-  margin: 12px 0;
+  margin: 12px 0 0;
   padding: 10px 12px;
   border-radius: 10px;
   background: #f4eef8;
@@ -174,4 +226,9 @@ textarea { min-height: 84px; resize: vertical; }
   .storeRow .storeName { grid-column: 1 / -1; }
   .paBadge { min-width: 0; }
   .historyItem { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 430px) {
+  .authActions { display: grid; }
+  .textButton { text-align: left; min-height: 38px; }
 }
