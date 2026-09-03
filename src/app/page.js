@@ -415,12 +415,22 @@ export default function Home() {
     }));
   }
 
-  function voltarParaHoje() {
+  async function carregarHoje() {
     const hoje = hojeLocal();
-    const diaHoje = dias.find((dia) => dia.data === hoje);
+    const { data: diaHoje } = await supabase
+      .from("dias_pa")
+      .select("id,data,situacao,observacao,lancamentos_pa(id,loja_id,vendas,pecas)")
+      .eq("usuario_id", sessao.user.id)
+      .eq("data", hoje)
+      .maybeSingle();
+
     setForm(diaHoje ? formularioDoDia(diaHoje, lojas) : formularioVazio(lojas, hoje));
     if (mes !== hoje.slice(0, 7)) setMes(hoje.slice(0, 7));
+  }
+
+  async function voltarParaHoje() {
     setMensagem("");
+    await carregarHoje();
   }
 
   function abrirDia(dia) {
@@ -488,9 +498,8 @@ export default function Home() {
       const sucesso = await salvarFerias();
 
       if (sucesso) {
-        setForm(formularioVazio(lojas, hojeLocal()));
-        if (mes !== hojeLocal().slice(0, 7)) setMes(hojeLocal().slice(0, 7));
-        else await carregarDados();
+        if (mes === hojeLocal().slice(0, 7)) await carregarDados();
+        await carregarHoje();
         setMensagem(`Férias registradas de ${formatarData(inicioFerias)} a ${formatarData(fimFerias)}.`);
       }
 
@@ -504,6 +513,7 @@ export default function Home() {
       return;
     }
 
+    const dataSalva = form.data;
     const { data: diaSalvo, error: erroDia } = await supabase
       .from("dias_pa")
       .upsert(
@@ -552,8 +562,8 @@ export default function Home() {
       }
     }
 
-    await carregarDados();
-    if (form.data !== hojeLocal()) voltarParaHoje();
+    if (dataSalva.slice(0, 7) === mes) await carregarDados();
+    if (dataSalva !== hojeLocal()) await carregarHoje();
     setMensagem("Lançamento salvo com sucesso.");
     setSalvando(false);
   }
