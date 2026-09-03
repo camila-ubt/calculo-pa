@@ -43,7 +43,7 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
         ref={dialogRef}
         className="prizeDialog"
         aria-labelledby="prizeTitle"
-        aria-describedby="prizeDescription prizeVerification"
+        aria-describedby="prizeVerification"
         onClick={(evento) => { if (evento.target === evento.currentTarget) evento.currentTarget.close(); }}
       >
         <div className="prizeContent">
@@ -53,10 +53,11 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
             ))}
           </div>
           <button className="prizeClose" type="button" aria-label="Fechar premiação" onClick={() => dialogRef.current.close()}>×</button>
-          <div className="prizeMedal" aria-hidden="true">🏆</div>
-          <p className="prizeMonth">{mesFormatado}</p>
-          <h2 id="prizeTitle">Seu esforço merece ser celebrado!</h2>
-          <p id="prizeDescription" className="prizeDescription">Parabéns! Pelos lançamentos do mês, você atingiu a faixa de premiação.</p>
+          <div className="prizeHeader">
+            <div className="prizeMedal" aria-hidden="true">🏆</div>
+            <p className="prizeMonth">{mesFormatado}</p>
+          </div>
+          <h2 id="prizeTitle">Parabéns pelo seu resultado!</h2>
           <div className="prizeAmount">
             <span>Premiação prevista</span>
             <strong>R$ {valor}</strong>
@@ -65,7 +66,7 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
           <p className="prizeStats">PA {valorPa.toFixed(2).replace(".", ",")} <span aria-hidden="true">·</span> {diasValidos} dias trabalhados</p>
           <div id="prizeVerification" className="prizeVerification">
             <strong>Aguardando verificação</strong>
-            <p>A liberação da premiação depende da verificação e aprovação dos lançamentos. O valor poderá ser ajustado após a conferência.</p>
+            <p>A liberação depende da verificação e aprovação dos lançamentos. O valor pode mudar após a conferência.</p>
           </div>
           <button className="primary prizeConfirm" type="button" autoFocus onClick={() => dialogRef.current.close()}>Entendi, vamos comemorar!</button>
         </div>
