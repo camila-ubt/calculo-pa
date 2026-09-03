@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import PremiacaoMensal from "@/components/PremiacaoMensal";
+import { premioDoMes } from "@/lib/premiacao.mjs";
 
 function hojeLocal() {
   const agora = new Date();
@@ -25,14 +27,6 @@ function ultimoDiaDoMesPreenchido(mes, dias) {
 function pa(pecas, vendas) {
   if (!vendas) return 0;
   return pecas / vendas;
-}
-
-function premioDoMes(valorPa, diasValidos, ultimoDiaPreenchido) {
-  if (!ultimoDiaPreenchido) return "A premiação aparece após preencher o último dia do mês.";
-  if (diasValidos < 15) return "Sem premiação: mínimo de 15 dias trabalhados não atingido.";
-  if (valorPa >= 2.6) return "Premiação: R$ 150 em peças";
-  if (valorPa >= 2.2) return "Premiação: R$ 100 em peças";
-  return "Sem premiação neste mês.";
 }
 
 function formatarData(data) {
@@ -138,6 +132,9 @@ export default function Home() {
   const [lojas, setLojas] = useState([]);
   const [dias, setDias] = useState([]);
   const [historicoAberto, setHistoricoAberto] = useState(false);
+  const [lojaHistorico, setLojaHistorico] = useState("");
+  const [periodoCarregado, setPeriodoCarregado] = useState(null);
+  const ultimaCarga = useRef(0);
   const [form, setForm] = useState(formularioVazio([]));
 
   useEffect(() => {
@@ -191,7 +188,9 @@ export default function Home() {
   }
 
   async function carregarDados() {
+    const carga = ++ultimaCarga.current;
     setCarregando(true);
+    setPeriodoCarregado(null);
     setMensagem("");
 
     const [lojasResp, diasResp] = await Promise.all([
@@ -205,6 +204,8 @@ export default function Home() {
         .order("data", { ascending: false }),
     ]);
 
+    if (carga !== ultimaCarga.current) return;
+
     const erro = lojasResp.error || diasResp.error;
     if (erro) setMensagem(erro.message);
 
@@ -212,6 +213,7 @@ export default function Home() {
     const diasDoMes = diasResp.data || [];
     setLojas(lojasAtivas);
     setDias(diasDoMes);
+    if (!erro) setPeriodoCarregado(`${sessao.user.id}:${mes}`);
 
     const hoje = hojeLocal();
     setForm((atual) => {
@@ -741,7 +743,16 @@ export default function Home() {
 
   const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
   const editandoOutroDia = form.data !== hojeLocal();
-  const premiacaoLiberada = ultimoDiaDoMesPreenchido(mes, dias);
+  const dadosProntos = !carregando && periodoCarregado === `${sessao.user.id}:${mes}`;
+  const premiacao = premioDoMes(resumoMes.pa, resumoMes.diasValidos, ultimoDiaDoMesPreenchido(mes, dias));
+  const lojasDoHistorico = new Map(lojas.map((loja) => [String(loja.id), loja.sigla || loja.nome]));
+  dias.forEach((dia) => (dia.lancamentos_pa || []).forEach((item) => {
+    const id = String(item.loja_id);
+    if (!lojasDoHistorico.has(id)) lojasDoHistorico.set(id, `Loja ${id}`);
+  }));
+  const diasFiltrados = lojaHistorico
+    ? dias.filter((dia) => (dia.lancamentos_pa || []).some((item) => String(item.loja_id) === lojaHistorico))
+    : dias;
 
   return (
     <main className="dashboard">
@@ -765,9 +776,6 @@ export default function Home() {
             <p className="eyebrow">{editandoOutroDia ? "Lançamento anterior" : "Lançamento de hoje"}</p>
             <h2>{formatarData(form.data)}</h2>
           </div>
-          {editandoOutroDia && (
-            <button className="secondary compactButton" type="button" onClick={voltarParaHoje}>Voltar para hoje</button>
-          )}
         </div>
 
         <form className="dailyForm" onSubmit={salvarDia}>
@@ -785,6 +793,16 @@ export default function Home() {
           <div className="dateNavigation" aria-label="Navegação entre dias">
             <button className="dateNavButton" type="button" onClick={() => navegarDia(-1)} aria-label="Ir para o dia anterior">
               ← Anterior
+            </button>
+            <button
+              className="dateNavButton todayNavButton"
+              type="button"
+              onClick={voltarParaHoje}
+              disabled={!editandoOutroDia}
+              aria-label="Voltar para hoje"
+              title="Voltar para hoje"
+            >
+              Hoje
             </button>
             <button
               className="dateNavButton"
@@ -937,7 +955,14 @@ export default function Home() {
           <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
           <div className="metric"><span>PA</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
         </div>
-        <div className="prize">{premioDoMes(resumoMes.pa, resumoMes.diasValidos, premiacaoLiberada)}</div>
+        <PremiacaoMensal
+          key={sessao.user.id}
+          mes={mes}
+          premio={premiacao}
+          valorPa={resumoMes.pa}
+          diasValidos={resumoMes.diasValidos}
+          pronto={dadosProntos && !salvando}
+        />
       </section>
 
       <section className="historySection">
@@ -953,15 +978,26 @@ export default function Home() {
 
         {historicoAberto && (
           <div className="historyPanel">
+            <label className="historyFilter">
+              Filtrar por loja
+              <select value={lojaHistorico} onChange={(e) => setLojaHistorico(e.target.value)}>
+                <option value="">Todas as lojas</option>
+                {[...lojasDoHistorico].map(([id, nome]) => <option key={id} value={id}>{nome}</option>)}
+              </select>
+            </label>
+            {lojaHistorico && <p className="helperText">Vendas, peças e PA abaixo são somente desta loja. O resumo do mês considera todas as lojas.</p>}
             {carregando ? (
               <p>Carregando...</p>
-            ) : dias.length === 0 ? (
-              <p className="muted">Nenhum lançamento neste mês.</p>
+            ) : !dadosProntos ? (
+              <p className="muted">Não foi possível carregar o histórico deste mês. Tente novamente.</p>
+            ) : diasFiltrados.length === 0 ? (
+              <p className="muted">{lojaHistorico ? "Nenhum lançamento nesta loja no mês selecionado." : "Nenhum lançamento neste mês."}</p>
             ) : (
               <div className="history">
-                {dias.map((dia) => {
-                  const vendas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.vendas || 0), 0);
-                  const pecas = (dia.lancamentos_pa || []).reduce((soma, item) => soma + Number(item.pecas || 0), 0);
+                {diasFiltrados.map((dia) => {
+                  const registros = (dia.lancamentos_pa || []).filter((item) => !lojaHistorico || String(item.loja_id) === lojaHistorico);
+                  const vendas = registros.reduce((soma, item) => soma + Number(item.vendas || 0), 0);
+                  const pecas = registros.reduce((soma, item) => soma + Number(item.pecas || 0), 0);
                   const situacaoNormalizada = normalizarSituacao(dia.situacao);
                   const situacao = situacoes.find(([valor]) => valor === situacaoNormalizada)?.[1] || situacaoNormalizada;
 
@@ -970,6 +1006,7 @@ export default function Home() {
                       <div>
                         <strong>{formatarData(dia.data)}</strong>
                         <span>{situacao}</span>
+                        {registros.length > 0 && <span>{[...new Set(registros.map((item) => lojasDoHistorico.get(String(item.loja_id))))].join(" · ")}</span>}
                       </div>
                       <span className="historySummary">
                         {dia.situacao === "trabalhado"

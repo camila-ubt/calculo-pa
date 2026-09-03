@@ -26,14 +26,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 3px;
 }
 
 .dateNavButton {
   min-height: 24px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 3px 9px;
+  padding: 3px 7px;
   background: rgba(255, 250, 246, 0.92);
   color: var(--wine);
   box-shadow: 0 3px 9px rgba(87, 29, 51, 0.06);
@@ -57,6 +57,18 @@
   box-shadow: none;
   opacity: .45;
 }
+
+.todayNavButton {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.historyFilter { margin-bottom: 10px; color: var(--wine); font-size: 12px; }
+.historyFilter select { font-size: 14px; }
+.historyPanel > .helperText { margin-bottom: 10px; }
 
 @media (min-width: 761px) {
   .sectionHeading {

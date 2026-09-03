@@ -1,0 +1,60 @@
+.prizeEligible { display: grid; gap: 7px; }
+.prizeEligible > span { font-weight: 400; }
+.prizeEligible .textButton { justify-self: start; font-size: 13px; }
+
+body:has(.prizeDialog[open]) { overflow: hidden; }
+.prizeDialog {
+  width: min(480px, calc(100% - 28px));
+  max-height: calc(100dvh - 28px);
+  padding: 0;
+  border: 1px solid #efcfbd;
+  border-radius: 26px;
+  color: var(--wine-dark);
+  background: #fffaf5;
+  box-shadow: 0 28px 100px #35132155;
+}
+.prizeDialog::backdrop { background: #29131b99; backdrop-filter: blur(4px); }
+.prizeContent { position: relative; overflow: hidden; padding: 32px; text-align: center; }
+.prizeClose {
+  position: absolute; top: 12px; right: 12px; z-index: 1;
+  width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: #f4e6df; color: var(--wine-dark); font-size: 24px; line-height: 1;
+}
+.prizeMedal {
+  display: grid; place-items: center; width: 80px; height: 80px; margin: 0 auto 16px;
+  border: 1px solid #e9c77c; border-radius: 50%; background: #fff0c8; font-size: 42px;
+  box-shadow: 0 0 0 8px #f9eddc;
+}
+.prizeMonth { margin: 0 0 10px; color: var(--wine); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.prizeContent h2 { margin-bottom: 12px; font-family: "Playfair Display", serif; font-size: clamp(25px, 6vw, 32px); line-height: 1.15; }
+.prizeDescription { margin-bottom: 20px; font-size: 14px; line-height: 1.5; color: #74605f; }
+.prizeAmount { display: grid; gap: 2px; padding: 16px; border: 1px solid #efd5aa; border-radius: 18px; background: linear-gradient(130deg, #fff1d2, #fff9ec); }
+.prizeAmount > span { font-size: 13px; color: #775922; }
+.prizeAmount strong { font-size: 52px; line-height: 1.2; letter-spacing: -.04em; }
+.prizeStats { margin: 12px 0 20px; font-size: 13px; color: var(--wine); }
+.prizeStats span { margin: 0 7px; }
+.prizeVerification { padding: 14px; border: 1px solid #e6cbd4; border-radius: 12px; background: var(--rose-light); text-align: left; }
+.prizeVerification strong { display: block; margin-bottom: 5px; font-size: 13px; }
+.prizeVerification p { margin: 0; font-size: 13px; line-height: 1.5; }
+.prizeConfirm { width: 100%; margin-top: 20px; min-height: 44px; font-size: 14px; }
+.prizeConfetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.prizeConfetti i {
+  position: absolute; left: var(--x); top: -15px; width: 7px; height: 12px;
+  background: #cf9b38; opacity: 0;
+}
+.prizeConfetti i:nth-child(3n) { background: #c66b89; border-radius: 50%; }
+.prizeConfetti i:nth-child(3n + 1) { background: #7b2948; }
+.prizeDialog[open] .prizeConfetti i { animation: prizeConfettiFall 2.4s var(--delay) ease-out both; }
+@keyframes prizeConfettiFall {
+  0% { opacity: 0; transform: translateY(0) rotate(var(--rotation)); }
+  15% { opacity: .85; }
+  100% { opacity: 0; transform: translateY(400px) rotate(calc(var(--rotation) + 240deg)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prizeDialog[open] .prizeConfetti i { animation: none; }
+}
+@media (max-width: 520px) {
+  .prizeContent { padding: 28px 20px 20px; }
+  .prizeMedal { width: 64px; height: 64px; font-size: 34px; }
+  .prizeAmount strong { font-size: 44px; }
+}
