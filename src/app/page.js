@@ -550,6 +550,19 @@ export default function Home() {
         setSalvando(false);
         return;
       }
+
+      const pecasMenoresQueVendas = form.lojasSelecionadas.some((lojaId) => {
+        const valores = form.lojas[lojaId] || {};
+        const vendas = Number(valores.vendas || 0);
+        const pecas = Number(valores.pecas || 0);
+        return pecas < vendas;
+      });
+
+      if (pecasMenoresQueVendas) {
+        setMensagem("A quantidade de peças não pode ser menor que a quantidade de vendas.");
+        setSalvando(false);
+        return;
+      }
     }
 
     const { data: diaSalvo, error: erroDia } = await supabase
