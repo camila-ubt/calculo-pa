@@ -463,6 +463,39 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  async function removerLancamento() {
+    const diaExistente = dias.find((dia) => dia.data === form.data);
+    if (!diaExistente) {
+      setMensagem("Não existe lançamento salvo nesta data.");
+      return;
+    }
+
+    const confirmou = typeof window === "undefined"
+      ? true
+      : window.confirm(`Remover o lançamento de ${formatarData(form.data)}? Este dia deixará de contar no PA do mês.`);
+
+    if (!confirmou) return;
+
+    setSalvando(true);
+    setMensagem("");
+
+    const { error } = await supabase
+      .from("dias_pa")
+      .delete()
+      .eq("id", diaExistente.id)
+      .eq("usuario_id", sessao.user.id);
+
+    if (error) {
+      setMensagem(error.message);
+      setSalvando(false);
+      return;
+    }
+
+    await carregarDados();
+    setMensagem("Lançamento removido. Este dia não conta mais no PA do mês.");
+    setSalvando(false);
+  }
+
   async function salvarFerias() {
     const periodo = datasEntre(form.feriasInicio, form.feriasFim);
 
@@ -536,10 +569,20 @@ export default function Home() {
     }
 
     if (form.situacao === "trabalhado") {
+      const campoVazio = form.lojasSelecionadas.some((lojaId) => {
+        const valores = form.lojas[lojaId] || {};
+        return valores.vendas === "" || valores.vendas == null || valores.pecas === "" || valores.pecas == null;
+      });
+
+      if (campoVazio) {
+        setMensagem("Preencha vendas e peças. Para excluir um dia já lançado, use “Remover lançamento”.");
+        setSalvando(false);
+        return;
+      }
+
       const valorInvalido = form.lojasSelecionadas.some((lojaId) => {
         const valores = form.lojas[lojaId] || {};
         return [valores.vendas, valores.pecas].some((valor) => {
-          if (valor === "" || valor == null) return false;
           const numero = Number(valor);
           return !Number.isInteger(numero) || numero < 0 || numero > 999;
         });
@@ -600,8 +643,8 @@ export default function Home() {
       const registros = form.lojasSelecionadas.map((lojaId) => ({
         dia_id: diaSalvo.id,
         loja_id: Number(lojaId),
-        vendas: Number(form.lojas[lojaId]?.vendas || 0),
-        pecas: Number(form.lojas[lojaId]?.pecas || 0),
+        vendas: Number(form.lojas[lojaId]?.vendas),
+        pecas: Number(form.lojas[lojaId]?.pecas),
       }));
 
       const { error } = await supabase.from("lancamentos_pa").insert(registros);
@@ -760,6 +803,7 @@ export default function Home() {
 
   const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
   const editandoOutroDia = form.data !== hojeLocal();
+  const lancamentoExistente = dias.some((dia) => dia.data === form.data);
 
   return (
     <main className="dashboard">
@@ -937,9 +981,16 @@ export default function Home() {
             </div>
           )}
 
-          <button className="primary saveButton" type="submit" disabled={salvando}>
-            {salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
-          </button>
+          <div className="launchActions">
+            {lancamentoExistente && (
+              <button className="secondary removeLaunchButton" type="button" onClick={removerLancamento} disabled={salvando}>
+                Remover lançamento
+              </button>
+            )}
+            <button className="primary saveButton" type="submit" disabled={salvando}>
+              {salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
+            </button>
+          </div>
         </form>
 
         {mensagem && <p className="message">{mensagem}</p>}
