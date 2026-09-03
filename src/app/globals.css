@@ -276,6 +276,10 @@ textarea { min-height: 84px; resize: vertical; }
   gap: 10px;
 }
 
+.storeEntry > .helperText {
+  display: none;
+}
+
 .dailyTotal {
   align-items: flex-start;
   padding: 12px 14px;
