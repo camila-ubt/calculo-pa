@@ -46,10 +46,15 @@ export default function Home() {
   const supabase = useMemo(() => createClient(), []);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [processandoAuth, setProcessandoAuth] = useState(false);
   const [sessao, setSessao] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [mensagem, setMensagem] = useState("");
+  const [modoAuth, setModoAuth] = useState("entrar");
+  const [recuperacaoSenha, setRecuperacaoSenha] = useState(false);
   const [login, setLogin] = useState({ email: "", senha: "" });
+  const [cadastro, setCadastro] = useState({ nome: "", email: "", senha: "", confirmarSenha: "" });
+  const [novaSenha, setNovaSenha] = useState({ senha: "", confirmarSenha: "" });
   const [mes, setMes] = useState(hojeLocal().slice(0, 7));
   const [lojas, setLojas] = useState([]);
   const [dias, setDias] = useState([]);
@@ -62,25 +67,37 @@ export default function Home() {
 
   useEffect(() => {
     async function iniciar() {
+      if (typeof window !== "undefined") {
+        const parametros = new URLSearchParams(window.location.search);
+        if (parametros.get("recuperacao") === "1") setRecuperacaoSenha(true);
+      }
+
       const { data } = await supabase.auth.getSession();
       setSessao(data.session);
-      if (data.session) await carregarPerfil(data.session.user.id);
+      if (data.session && !recuperacaoSenha) await carregarPerfil(data.session.user.id);
       setCarregando(false);
     }
 
     iniciar();
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_evento, novaSessao) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (evento, novaSessao) => {
       setSessao(novaSessao);
-      if (novaSessao) await carregarPerfil(novaSessao.user.id);
-      else setPerfil(null);
+
+      if (evento === "PASSWORD_RECOVERY") {
+        setRecuperacaoSenha(true);
+        setPerfil(null);
+        return;
+      }
+
+      if (novaSessao && !recuperacaoSenha) await carregarPerfil(novaSessao.user.id);
+      else if (!novaSessao) setPerfil(null);
     });
 
     return () => listener.subscription.unsubscribe();
   }, [supabase]);
 
   useEffect(() => {
-    if (sessao && perfil?.ativo) carregarDados();
-  }, [sessao, perfil, mes]);
+    if (sessao && perfil?.ativo && !recuperacaoSenha) carregarDados();
+  }, [sessao, perfil, mes, recuperacaoSenha]);
 
   async function carregarPerfil(id) {
     const { data, error } = await supabase
@@ -130,14 +147,121 @@ export default function Home() {
     setCarregando(false);
   }
 
+  function trocarModoAuth(modo) {
+    setMensagem("");
+    setModoAuth(modo);
+  }
+
   async function entrar(evento) {
     evento.preventDefault();
     setMensagem("");
+    setProcessandoAuth(true);
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: login.email,
+      email: login.email.trim(),
       password: login.senha,
     });
+
     if (error) setMensagem("E-mail ou senha incorretos.");
+    setProcessandoAuth(false);
+  }
+
+  async function criarConta(evento) {
+    evento.preventDefault();
+    setMensagem("");
+
+    if (cadastro.senha.length < 6) {
+      setMensagem("A senha precisa ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    if (cadastro.senha !== cadastro.confirmarSenha) {
+      setMensagem("As senhas não conferem.");
+      return;
+    }
+
+    setProcessandoAuth(true);
+    const { data, error } = await supabase.auth.signUp({
+      email: cadastro.email.trim(),
+      password: cadastro.senha,
+      options: {
+        data: { nome: cadastro.nome.trim() },
+        emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+      },
+    });
+
+    if (error) {
+      setMensagem(error.message.includes("already") ? "Já existe uma conta com este e-mail." : error.message);
+      setProcessandoAuth(false);
+      return;
+    }
+
+    setCadastro({ nome: "", email: "", senha: "", confirmarSenha: "" });
+
+    if (data.session) {
+      setMensagem("Conta criada com sucesso.");
+    } else {
+      setLogin((atual) => ({ ...atual, email: cadastro.email.trim(), senha: "" }));
+      setModoAuth("entrar");
+      setMensagem("Conta criada. Confira seu e-mail para confirmar o cadastro antes de entrar.");
+    }
+
+    setProcessandoAuth(false);
+  }
+
+  async function enviarRecuperacao(evento) {
+    evento.preventDefault();
+    setMensagem("");
+
+    if (!login.email.trim()) {
+      setMensagem("Informe seu e-mail.");
+      return;
+    }
+
+    setProcessandoAuth(true);
+    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/?recuperacao=1` : undefined;
+    const { error } = await supabase.auth.resetPasswordForEmail(login.email.trim(), { redirectTo });
+
+    if (error) setMensagem(error.message);
+    else setMensagem("Enviamos um link para redefinir sua senha. Confira seu e-mail.");
+
+    setProcessandoAuth(false);
+  }
+
+  async function salvarNovaSenha(evento) {
+    evento.preventDefault();
+    setMensagem("");
+
+    if (novaSenha.senha.length < 6) {
+      setMensagem("A nova senha precisa ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    if (novaSenha.senha !== novaSenha.confirmarSenha) {
+      setMensagem("As senhas não conferem.");
+      return;
+    }
+
+    setProcessandoAuth(true);
+    const { error } = await supabase.auth.updateUser({ password: novaSenha.senha });
+
+    if (error) {
+      setMensagem(error.message);
+      setProcessandoAuth(false);
+      return;
+    }
+
+    await supabase.auth.signOut();
+    setNovaSenha({ senha: "", confirmarSenha: "" });
+    setRecuperacaoSenha(false);
+    setModoAuth("entrar");
+    setMensagem("Senha alterada com sucesso. Entre novamente com a nova senha.");
+
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
+    setProcessandoAuth(false);
   }
 
   async function sair() {
@@ -265,24 +389,168 @@ export default function Home() {
     return <main className="loginPage"><p>Carregando...</p></main>;
   }
 
+  if (recuperacaoSenha && sessao) {
+    return (
+      <main className="loginPage">
+        <section className="card loginCard">
+          <p className="muted">Segurança da conta</p>
+          <h1>Redefinir senha</h1>
+          <p className="muted">Crie uma nova senha para acessar o Meu PA.</p>
+          <form className="formStack" onSubmit={salvarNovaSenha}>
+            <label>
+              Nova senha
+              <input
+                type="password"
+                minLength="6"
+                required
+                autoComplete="new-password"
+                value={novaSenha.senha}
+                onChange={(e) => setNovaSenha({ ...novaSenha, senha: e.target.value })}
+              />
+            </label>
+            <label>
+              Confirmar nova senha
+              <input
+                type="password"
+                minLength="6"
+                required
+                autoComplete="new-password"
+                value={novaSenha.confirmarSenha}
+                onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })}
+              />
+            </label>
+            <button className="primary" type="submit" disabled={processandoAuth}>
+              {processandoAuth ? "Alterando..." : "Salvar nova senha"}
+            </button>
+          </form>
+          {mensagem && <p className="message">{mensagem}</p>}
+        </section>
+      </main>
+    );
+  }
+
   if (!sessao) {
     return (
       <main className="loginPage">
         <section className="card loginCard">
+          <div className="authBrand">PA</div>
           <p className="muted">Área das vendedoras</p>
-          <h1>Meu PA</h1>
-          <p className="muted">Entre para lançar suas vendas e peças de cada loja.</p>
-          <form className="formStack" onSubmit={entrar}>
-            <label>
-              E-mail
-              <input type="email" required value={login.email} onChange={(e) => setLogin({ ...login, email: e.target.value })} />
-            </label>
-            <label>
-              Senha
-              <input type="password" required value={login.senha} onChange={(e) => setLogin({ ...login, senha: e.target.value })} />
-            </label>
-            <button className="primary" type="submit">Entrar</button>
-          </form>
+          <h1>{modoAuth === "cadastro" ? "Criar conta" : modoAuth === "recuperar" ? "Recuperar senha" : "Meu PA"}</h1>
+          <p className="muted">
+            {modoAuth === "cadastro"
+              ? "Crie seu acesso para acompanhar e lançar seu PA."
+              : modoAuth === "recuperar"
+                ? "Informe seu e-mail para receber o link de recuperação."
+                : "Entre para lançar suas vendas e peças de cada loja."}
+          </p>
+
+          {modoAuth === "entrar" && (
+            <form className="formStack" onSubmit={entrar}>
+              <label>
+                E-mail
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={login.email}
+                  onChange={(e) => setLogin({ ...login, email: e.target.value })}
+                />
+              </label>
+              <label>
+                Senha
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={login.senha}
+                  onChange={(e) => setLogin({ ...login, senha: e.target.value })}
+                />
+              </label>
+              <button className="primary" type="submit" disabled={processandoAuth}>
+                {processandoAuth ? "Entrando..." : "Entrar"}
+              </button>
+            </form>
+          )}
+
+          {modoAuth === "cadastro" && (
+            <form className="formStack" onSubmit={criarConta}>
+              <label>
+                Nome
+                <input
+                  type="text"
+                  required
+                  autoComplete="name"
+                  value={cadastro.nome}
+                  onChange={(e) => setCadastro({ ...cadastro, nome: e.target.value })}
+                />
+              </label>
+              <label>
+                E-mail
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={cadastro.email}
+                  onChange={(e) => setCadastro({ ...cadastro, email: e.target.value })}
+                />
+              </label>
+              <label>
+                Senha
+                <input
+                  type="password"
+                  minLength="6"
+                  required
+                  autoComplete="new-password"
+                  value={cadastro.senha}
+                  onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })}
+                />
+              </label>
+              <label>
+                Confirmar senha
+                <input
+                  type="password"
+                  minLength="6"
+                  required
+                  autoComplete="new-password"
+                  value={cadastro.confirmarSenha}
+                  onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })}
+                />
+              </label>
+              <button className="primary" type="submit" disabled={processandoAuth}>
+                {processandoAuth ? "Criando..." : "Criar conta"}
+              </button>
+            </form>
+          )}
+
+          {modoAuth === "recuperar" && (
+            <form className="formStack" onSubmit={enviarRecuperacao}>
+              <label>
+                E-mail
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={login.email}
+                  onChange={(e) => setLogin({ ...login, email: e.target.value })}
+                />
+              </label>
+              <button className="primary" type="submit" disabled={processandoAuth}>
+                {processandoAuth ? "Enviando..." : "Enviar link de recuperação"}
+              </button>
+            </form>
+          )}
+
+          <div className="authActions">
+            {modoAuth === "entrar" ? (
+              <>
+                <button className="textButton" type="button" onClick={() => trocarModoAuth("cadastro")}>Criar conta</button>
+                <button className="textButton" type="button" onClick={() => trocarModoAuth("recuperar")}>Esqueci minha senha</button>
+              </>
+            ) : (
+              <button className="textButton" type="button" onClick={() => trocarModoAuth("entrar")}>Voltar para o login</button>
+            )}
+          </div>
+
           {mensagem && <p className="message">{mensagem}</p>}
         </section>
       </main>
