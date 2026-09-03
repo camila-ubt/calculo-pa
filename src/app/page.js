@@ -498,7 +498,6 @@ export default function Home() {
       const sucesso = await salvarFerias();
 
       if (sucesso) {
-        if (mes === hojeLocal().slice(0, 7)) await carregarDados();
         await carregarHoje();
         setMensagem(`Férias registradas de ${formatarData(inicioFerias)} a ${formatarData(fimFerias)}.`);
       }
@@ -562,8 +561,8 @@ export default function Home() {
       }
     }
 
-    if (dataSalva.slice(0, 7) === mes) await carregarDados();
     if (dataSalva !== hojeLocal()) await carregarHoje();
+    else await carregarDados();
     setMensagem("Lançamento salvo com sucesso.");
     setSalvando(false);
   }
