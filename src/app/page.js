@@ -201,16 +201,10 @@ export default function Home() {
     const hoje = hojeLocal();
     setForm((atual) => {
       if (atual.data !== hoje) {
-        return {
-          ...atual,
-          lojas: mapaLojas(lojasAtivas, atual.situacao === "trabalhado"
-            ? atual.lojasSelecionadas.map((lojaId) => ({
-                loja_id: lojaId,
-                vendas: atual.lojas[lojaId]?.vendas ?? "",
-                pecas: atual.lojas[lojaId]?.pecas ?? "",
-              }))
-            : []),
-        };
+        const diaSelecionado = diasDoMes.find((dia) => dia.data === atual.data);
+        return diaSelecionado
+          ? formularioDoDia(diaSelecionado, lojasAtivas)
+          : formularioVazio(lojasAtivas, atual.data);
       }
 
       if (mes !== hoje.slice(0, 7)) return formularioVazio(lojasAtivas, hoje);
@@ -365,6 +359,23 @@ export default function Home() {
     await supabase.auth.signOut();
   }
 
+  function selecionarData(data) {
+    if (!data) return;
+
+    const hoje = hojeLocal();
+    if (data > hoje) {
+      setMensagem("Não é possível fazer lançamentos em datas futuras.");
+      return;
+    }
+
+    setMensagem("");
+    const diaExistente = dias.find((dia) => dia.data === data);
+    setForm(diaExistente ? formularioDoDia(diaExistente, lojas) : formularioVazio(lojas, data));
+
+    const mesDaData = data.slice(0, 7);
+    if (mesDaData !== mes) setMes(mesDaData);
+  }
+
   function selecionarSituacao(situacao) {
     setMensagem("");
     setForm((atual) => ({
@@ -405,7 +416,10 @@ export default function Home() {
   }
 
   function voltarParaHoje() {
-    setForm(formularioVazio(lojas, hojeLocal()));
+    const hoje = hojeLocal();
+    const diaHoje = dias.find((dia) => dia.data === hoje);
+    setForm(diaHoje ? formularioDoDia(diaHoje, lojas) : formularioVazio(lojas, hoje));
+    if (mes !== hoje.slice(0, 7)) setMes(hoje.slice(0, 7));
     setMensagem("");
   }
 
@@ -461,6 +475,12 @@ export default function Home() {
     evento.preventDefault();
     setSalvando(true);
     setMensagem("");
+
+    if (form.data > hojeLocal()) {
+      setMensagem("Não é possível fazer lançamentos em datas futuras.");
+      setSalvando(false);
+      return;
+    }
 
     if (form.situacao === "ferias") {
       const inicioFerias = form.feriasInicio;
@@ -692,7 +712,7 @@ export default function Home() {
       <section className="card dailyCard">
         <div className="sectionHeading">
           <div>
-            <p className="eyebrow">{editandoOutroDia ? "Editando lançamento" : "Lançamento de hoje"}</p>
+            <p className="eyebrow">{editandoOutroDia ? "Lançamento anterior" : "Lançamento de hoje"}</p>
             <h2>{formatarData(form.data)}</h2>
           </div>
           {editandoOutroDia && (
@@ -701,6 +721,18 @@ export default function Home() {
         </div>
 
         <form className="dailyForm" onSubmit={salvarDia}>
+          <label>
+            Data do lançamento
+            <input
+              type="date"
+              required
+              max={hojeLocal()}
+              value={form.data}
+              onChange={(e) => selecionarData(e.target.value)}
+            />
+          </label>
+          <p className="helperText">A data começa em hoje, mas você pode escolher dias anteriores. Datas futuras não são permitidas.</p>
+
           <div>
             <span className="fieldTitle">Como foi o dia?</span>
             <div className="choiceGrid statusChoices" role="group" aria-label="Situação do dia">
