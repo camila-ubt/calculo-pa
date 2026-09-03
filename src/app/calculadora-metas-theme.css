@@ -197,6 +197,12 @@ button:focus-visible {
   background: var(--rose-light);
 }
 
+.message {
+  border: 1px solid rgba(123, 41, 72, 0.12);
+  box-shadow: 0 6px 18px rgba(123, 41, 72, 0.06);
+  font-weight: 600;
+}
+
 .dailyTotal {
   border: 1px solid rgba(123, 41, 72, 0.08);
 }

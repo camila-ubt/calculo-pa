@@ -550,6 +550,19 @@ export default function Home() {
         setSalvando(false);
         return;
       }
+
+      const pecasMenoresQueVendas = form.lojasSelecionadas.some((lojaId) => {
+        const valores = form.lojas[lojaId] || {};
+        const vendas = Number(valores.vendas || 0);
+        const pecas = Number(valores.pecas || 0);
+        return pecas < vendas;
+      });
+
+      if (pecasMenoresQueVendas) {
+        setMensagem("Confira o lançamento: a quantidade de peças deve ser igual ou maior que a quantidade de vendas.");
+        setSalvando(false);
+        return;
+      }
     }
 
     const { data: diaSalvo, error: erroDia } = await supabase
@@ -594,7 +607,14 @@ export default function Home() {
       const { error } = await supabase.from("lancamentos_pa").insert(registros);
 
       if (error) {
-        setMensagem(error.message);
+        const erroPecas = error.message?.includes("lancamentos_pa_pecas_maior_igual_vendas")
+          || error.message?.toLowerCase().includes("quantidade de peças");
+
+        setMensagem(
+          erroPecas
+            ? "Confira o lançamento: a quantidade de peças deve ser igual ou maior que a quantidade de vendas."
+            : error.message
+        );
         setSalvando(false);
         return;
       }
