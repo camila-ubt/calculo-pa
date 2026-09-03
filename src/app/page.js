@@ -426,6 +426,7 @@ export default function Home() {
 
     setForm(diaHoje ? formularioDoDia(diaHoje, lojas) : formularioVazio(lojas, hoje));
     if (mes !== hoje.slice(0, 7)) setMes(hoje.slice(0, 7));
+    else await carregarDados();
   }
 
   async function voltarParaHoje() {
