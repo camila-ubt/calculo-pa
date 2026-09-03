@@ -402,7 +402,9 @@ export default function Home() {
 
   function alterarLoja(lojaId, campo, valor) {
     const id = String(lojaId);
-    const numero = valor === "" ? "" : Math.max(0, Number.parseInt(valor, 10) || 0);
+    const somenteDigitos = String(valor).replace(/\D/g, "").slice(0, 3);
+    const numero = somenteDigitos === "" ? "" : Number(somenteDigitos);
+
     setForm((atual) => ({
       ...atual,
       lojas: {
@@ -513,6 +515,23 @@ export default function Home() {
       return;
     }
 
+    if (form.situacao === "trabalhado") {
+      const valorInvalido = form.lojasSelecionadas.some((lojaId) => {
+        const valores = form.lojas[lojaId] || {};
+        return [valores.vendas, valores.pecas].some((valor) => {
+          if (valor === "" || valor == null) return false;
+          const numero = Number(valor);
+          return !Number.isInteger(numero) || numero < 0 || numero > 999;
+        });
+      });
+
+      if (valorInvalido) {
+        setMensagem("Vendas e peças devem ser números inteiros de 0 a 999.");
+        setSalvando(false);
+        return;
+      }
+    }
+
     const dataSalva = form.data;
     const { data: diaSalvo, error: erroDia } = await supabase
       .from("dias_pa")
@@ -616,7 +635,7 @@ export default function Home() {
             </label>
             <label>
               Confirmar nova senha
-              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
+              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmimarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
             </label>
             <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Alterando..." : "Salvar nova senha"}</button>
           </form>
@@ -803,13 +822,28 @@ export default function Home() {
                         <div className="storeFields">
                           <label>
                             Vendas
-                            <input type="number" min="0" step="1" inputMode="numeric" value={valores.vendas} onChange={(e) => alterarLoja(lojaId, "vendas", e.target.value)} />
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]{1,3}"
+                              maxLength={3}
+                              value={valores.vendas}
+                              onChange={(e) => alterarLoja(lojaId, "vendas", e.target.value)}
+                            />
                           </label>
                           <label>
                             Peças
-                            <input type="number" min="0" step="1" inputMode="numeric" value={valores.pecas} onChange={(e) => alterarLoja(lojaId, "pecas", e.target.value)} />
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]{1,3}"
+                              maxLength={3}
+                              value={valores.pecas}
+                              onChange={(e) => alterarLoja(lojaId, "pecas", e.target.value)}
+                            />
                           </label>
                         </div>
+                        <p className="helperText">Somente números inteiros, de 0 a 999.</p>
                       </div>
                     );
                   })}
