@@ -526,7 +526,7 @@ export default function Home() {
       });
 
       if (valorInvalido) {
-        setMensagem("Vendas e peças devem ser números inteiros de 0 a 999.");
+        setMensagem("Quantidade de vendas e peças devem ser números inteiros de 0 a 999.");
         setSalvando(false);
         return;
       }
@@ -651,7 +651,7 @@ export default function Home() {
         <section className="card loginCard">
           <div className="authBrand">PA</div>
           <h1>{modoAuth === "cadastro" ? "Criar conta" : modoAuth === "recuperar" ? "Recuperar senha" : "Meu PA"}</h1>
-          <p className="muted">{modoAuth === "cadastro" ? "Crie seu acesso para acompanhar e lançar seu PA." : modoAuth === "recuperar" ? "Informe seu e-mail para receber o link de recuperação." : "Entre para lançar suas vendas e peças de cada loja."}</p>
+          <p className="muted">{modoAuth === "cadastro" ? "Crie seu acesso para acompanhar e lançar seu PA." : modoAuth === "recuperar" ? "Informe seu e-mail para receber o link de recuperação." : "Entre para lançar a quantidade de vendas e peças de cada loja."}</p>
 
           {modoAuth === "entrar" && (
             <form className="formStack" onSubmit={entrar}>
@@ -821,7 +821,7 @@ export default function Home() {
                         </div>
                         <div className="storeFields">
                           <label>
-                            Vendas
+                            Quantidade de vendas
                             <input
                               type="text"
                               inputMode="numeric"
@@ -899,7 +899,7 @@ export default function Home() {
         </div>
         <div className="summaryGrid">
           <div className="metric"><span>Dias válidos</span><strong>{resumoMes.diasValidos}</strong></div>
-          <div className="metric"><span>Vendas</span><strong>{resumoMes.vendas}</strong></div>
+          <div className="metric"><span>Quantidade de vendas</span><strong>{resumoMes.vendas}</strong></div>
           <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
           <div className="metric"><span>PA</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
         </div>
