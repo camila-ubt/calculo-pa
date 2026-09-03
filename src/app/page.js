@@ -434,7 +434,6 @@ export default function Home() {
       <main className="loginPage">
         <section className="card loginCard">
           <div className="authBrand">PA</div>
-          <p className="muted">Área das vendedoras</p>
           <h1>{modoAuth === "cadastro" ? "Criar conta" : modoAuth === "recuperar" ? "Recuperar senha" : "Meu PA"}</h1>
           <p className="muted">
             {modoAuth === "cadastro"
