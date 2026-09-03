@@ -133,102 +133,380 @@ textarea { min-height: 84px; resize: vertical; }
   color: #342b38;
 }
 
-.header {
+.dashboard {
+  width: min(100% - 24px, 760px);
+}
+
+.dashboardHeader {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
+  align-items: end;
+  gap: 18px;
   margin-bottom: 18px;
 }
 
-.headerActions { display: flex; gap: 8px; flex-wrap: wrap; }
+.greeting {
+  margin-bottom: 6px;
+  font-size: clamp(24px, 5vw, 34px);
+  line-height: 1.1;
+}
+
+.subtleAction {
+  color: #786d7d;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.monthControl {
+  min-width: 180px;
+  color: #5f5663;
+  font-size: 13px;
+}
+
+.dailyCard {
+  padding: 22px;
+}
+
+.sectionHeading,
+.summaryHeading,
+.storeEntryHeader,
+.dailyTotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionHeading {
+  margin-bottom: 20px;
+}
+
+.sectionHeading h2,
+.summaryHeading h2 {
+  margin-bottom: 0;
+}
+
+.eyebrow {
+  margin-bottom: 4px;
+  color: #746b79;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.compactButton {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.dailyForm {
+  display: grid;
+  gap: 22px;
+}
+
+.fieldTitle {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.helperText {
+  margin: -2px 0 10px;
+  color: #756d78;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.choiceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choiceButton {
+  border: 1px solid #d8d0de;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 9px 15px;
+  background: #fff;
+  color: #433a47;
+  font-weight: 700;
+}
+
+.choiceButton.active {
+  border-color: #6f3fa0;
+  background: #6f3fa0;
+  color: #fff;
+}
+
+.statusChoices .choiceButton {
+  flex: 1 1 120px;
+}
+
+.storeChoice {
+  min-width: 74px;
+}
+
+.selectedStores {
+  display: grid;
+  gap: 12px;
+}
+
+.storeEntry {
+  border: 1px solid #e8e1ec;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fcfbfd;
+}
+
+.storeEntryHeader {
+  margin-bottom: 12px;
+}
+
+.storeEntryHeader span {
+  color: #6f3fa0;
+  font-weight: 800;
+}
+
+.storeFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dailyTotal {
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f4eef8;
+}
+
+.dailyTotal span {
+  color: #665d6a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dailyTotal strong {
+  text-align: right;
+}
+
+.vacationBox {
+  padding: 14px;
+  border: 1px solid #e8e1ec;
+  border-radius: 14px;
+  background: #fcfbfd;
+}
+
+.vacationRange {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.saveButton {
+  width: 100%;
+}
+
+.message {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f4eef8;
+}
+
+.summarySection {
+  margin-top: 24px;
+}
+
+.summaryHeading {
+  margin-bottom: 10px;
+}
+
+.summaryHeading h2 {
+  font-size: 18px;
+}
 
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin: 16px 0;
+  gap: 10px;
 }
 
 .metric {
   background: #fff;
   border: 1px solid #e5dfea;
   border-radius: 14px;
-  padding: 14px;
+  padding: 13px;
 }
 
-.metric span { display: block; color: #6d6671; font-size: 13px; }
-.metric strong { display: block; margin-top: 4px; font-size: 22px; }
-
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+.metric span {
+  display: block;
+  color: #6d6671;
+  font-size: 12px;
 }
 
-.storeGrid { display: grid; gap: 12px; }
-.storeRow {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr 1fr auto;
-  gap: 10px;
-  align-items: end;
-  padding: 12px;
-  border: 1px solid #ece6ef;
-  border-radius: 12px;
-}
-
-.paBadge {
-  min-width: 72px;
-  min-height: 44px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #f1edf4;
-  font-weight: 800;
-}
-
-.history {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.historyItem {
-  display: grid;
-  grid-template-columns: 110px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid #ece6ef;
-  border-radius: 12px;
-}
-
-.message {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #f4eef8;
+.metric strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 21px;
 }
 
 .prize {
-  margin-top: 12px;
-  padding: 12px;
+  margin-top: 10px;
+  padding: 11px 12px;
   border-radius: 12px;
   background: #f4eef8;
   font-weight: 700;
 }
 
-@media (max-width: 760px) {
-  .summaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grid2 { grid-template-columns: 1fr; }
-  .header { flex-direction: column; }
-  .storeRow { grid-template-columns: 1fr 1fr; }
-  .storeRow .storeName { grid-column: 1 / -1; }
-  .paBadge { min-width: 0; }
-  .historyItem { grid-template-columns: 1fr; }
+.historySection {
+  margin-top: 18px;
+}
+
+.historyToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #e5dfea;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  color: #342b38;
+  font-weight: 800;
+  text-align: left;
+}
+
+.historyToggle span:last-child {
+  color: #6f3fa0;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.historyPanel {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #e5dfea;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.history {
+  display: grid;
+  gap: 8px;
+}
+
+.historyItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #ece6ef;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  color: #342b38;
+  text-align: left;
+}
+
+.historyItem > div {
+  display: grid;
+  gap: 3px;
+}
+
+.historyItem > div span {
+  color: #736a77;
+  font-size: 13px;
+}
+
+.historySummary {
+  color: #5e5662;
+  font-size: 13px;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  main {
+    width: min(100% - 18px, 980px);
+    padding-top: 16px;
+  }
+
+  .dashboard {
+    width: min(100% - 18px, 760px);
+  }
+
+  .dashboardHeader {
+    align-items: stretch;
+  }
+
+  .monthControl {
+    min-width: 150px;
+  }
+
+  .dailyCard {
+    padding: 18px 14px;
+  }
+
+  .summaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .historyItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .historySummary {
+    text-align: left;
+  }
 }
 
 @media (max-width: 430px) {
-  .authActions { display: grid; }
-  .textButton { text-align: left; min-height: 38px; }
+  .authActions {
+    display: grid;
+  }
+
+  .textButton {
+    text-align: left;
+    min-height: 38px;
+  }
+
+  .dashboardHeader {
+    flex-direction: column;
+  }
+
+  .monthControl {
+    width: 100%;
+  }
+
+  .sectionHeading {
+    align-items: flex-start;
+  }
+
+  .statusChoices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statusChoices .choiceButton {
+    width: 100%;
+  }
+
+  .storeFields,
+  .vacationRange {
+    grid-template-columns: 1fr;
+  }
+
+  .dailyTotal {
+    display: grid;
+  }
+
+  .dailyTotal strong {
+    text-align: left;
+  }
 }
