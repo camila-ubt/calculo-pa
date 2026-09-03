@@ -39,6 +39,15 @@ function formatarData(data) {
   return data.split("-").reverse().join("/");
 }
 
+function deslocarData(data, quantidadeDias) {
+  if (!data) return hojeLocal();
+
+  const [ano, mes, dia] = data.split("-").map(Number);
+  const dataUtc = new Date(Date.UTC(ano, mes - 1, dia));
+  dataUtc.setUTCDate(dataUtc.getUTCDate() + quantidadeDias);
+  return dataUtc.toISOString().slice(0, 10);
+}
+
 function datasEntre(inicio, fim) {
   if (!inicio || !fim || fim < inicio) return [];
 
@@ -381,6 +390,12 @@ export default function Home() {
     if (mesDaData !== mes) setMes(mesDaData);
   }
 
+  function navegarDia(deslocamento) {
+    const novaData = deslocarData(form.data, deslocamento);
+    if (novaData > hojeLocal()) return;
+    selecionarData(novaData);
+  }
+
   function selecionarSituacao(situacao) {
     setMensagem("");
     setForm((atual) => ({
@@ -506,7 +521,7 @@ export default function Home() {
       const sucesso = await salvarFerias();
 
       if (sucesso) {
-        await carregarHoje();
+        await carregarDados();
         setMensagem(`Férias registradas de ${formatarData(inicioFerias)} a ${formatarData(fimFerias)}.`);
       }
 
@@ -537,7 +552,6 @@ export default function Home() {
       }
     }
 
-    const dataSalva = form.data;
     const { data: diaSalvo, error: erroDia } = await supabase
       .from("dias_pa")
       .upsert(
@@ -586,8 +600,7 @@ export default function Home() {
       }
     }
 
-    if (dataSalva !== hojeLocal()) await carregarHoje();
-    else await carregarDados();
+    await carregarDados();
     setMensagem("Lançamento salvo com sucesso.");
     setSalvando(false);
   }
@@ -767,6 +780,20 @@ export default function Home() {
             />
           </label>
           <p className="helperText">A data começa em hoje, mas você pode escolher dias anteriores. Datas futuras não são permitidas.</p>
+          <div className="dateNavigation" aria-label="Navegação entre dias">
+            <button className="dateNavButton" type="button" onClick={() => navegarDia(-1)} aria-label="Ir para o dia anterior">
+              ← Anterior
+            </button>
+            <button
+              className="dateNavButton"
+              type="button"
+              onClick={() => navegarDia(1)}
+              disabled={form.data >= hojeLocal()}
+              aria-label="Ir para o próximo dia"
+            >
+              Próximo →
+            </button>
+          </div>
 
           <div>
             <span className="fieldTitle">Como foi o dia?</span>
