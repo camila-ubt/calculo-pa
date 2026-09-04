@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import "./premiacao.css";
 
@@ -9,8 +10,13 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
   const dialogRef = useRef(null);
   const celebracoesVistas = useRef(new Set());
   const [statusAprovacao, setStatusAprovacao] = useState("carregando");
+  const [regrasDestino, setRegrasDestino] = useState(null);
   const valor = premio.valor;
   const aprovado = statusAprovacao === "aprovada";
+
+  useEffect(() => {
+    setRegrasDestino(document.querySelector(".dailyCard"));
+  }, []);
 
   useEffect(() => {
     let ativo = true;
@@ -101,6 +107,27 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
     conteudoPremiacao = "Premiação aguardando conferência e aprovação.";
   }
 
+  const regrasPremiacao = (
+    <section className="prizeRules" aria-label="Regras da premiação do PA">
+      <h3>Como funciona a premiação</h3>
+      <p>
+        A premiação é válida para PA final a partir de <strong>2,20</strong>, desde que todas as regras sejam cumpridas.
+      </p>
+      <ul>
+        <li>É necessário ter no mínimo <strong>15 dias trabalhados/preenchidos</strong> no mês.</li>
+        <li>Dias trabalhados com venda ou com resultado zerado contam para os 15 dias.</li>
+        <li>Folga, falta, atestado e férias não contam como dia trabalhado.</li>
+        <li>A premiação só é calculada após o preenchimento do último dia do mês.</li>
+        <li><strong>PA de 2,20 a 2,59:</strong> R$ 100 em peças.</li>
+        <li><strong>PA a partir de 2,60:</strong> R$ 150 em peças.</li>
+        <li>Atingir a faixa de PA não confirma a premiação automaticamente: é necessário aguardar a conferência e a aprovação.</li>
+      </ul>
+      <p className="prizeRulesNote">
+        Após a aprovação, aparecerá a confirmação da premiação e a orientação para aguardar as instruções da Vi no dia do pagamento.
+      </p>
+    </section>
+  );
+
   return (
     <>
       <div className={`prize ${pronto && valor ? "prizeEligible" : ""}`}>
@@ -120,24 +147,7 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
         )}
       </div>
 
-      <section className="prizeRules" aria-label="Regras da premiação do PA">
-        <h3>Como funciona a premiação</h3>
-        <p>
-          A premiação é válida para PA final a partir de <strong>2,20</strong>, desde que todas as regras sejam cumpridas.
-        </p>
-        <ul>
-          <li>É necessário ter no mínimo <strong>15 dias trabalhados/preenchidos</strong> no mês.</li>
-          <li>Dias trabalhados com venda ou com resultado zerado contam para os 15 dias.</li>
-          <li>Folga, falta, atestado e férias não contam como dia trabalhado.</li>
-          <li>A premiação só é calculada após o preenchimento do último dia do mês.</li>
-          <li><strong>PA de 2,20 a 2,59:</strong> R$ 100 em peças.</li>
-          <li><strong>PA a partir de 2,60:</strong> R$ 150 em peças.</li>
-          <li>Atingir a faixa de PA não confirma a premiação automaticamente: é necessário aguardar a conferência e a aprovação.</li>
-        </ul>
-        <p className="prizeRulesNote">
-          Após a aprovação, aparecerá a confirmação da premiação e a orientação para aguardar as instruções da Vi no dia do pagamento.
-        </p>
-      </section>
+      {regrasDestino ? createPortal(regrasPremiacao, regrasDestino) : null}
 
       <dialog
         ref={dialogRef}
