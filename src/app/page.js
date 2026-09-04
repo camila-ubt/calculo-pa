@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import PremiacaoMensal from "@/components/PremiacaoMensal";
+import AvisosCorrecoes from "@/components/AvisosCorrecoes";
 import { premioDoMes } from "@/lib/premiacao.mjs";
 
 function hojeLocal() {
@@ -466,6 +467,14 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  async function abrirCorrecao(aviso) {
+    setForm(formularioVazio(lojas, aviso.data));
+    setHistoricoAberto(false);
+    const mesCorrigido = aviso.data.slice(0, 7);
+    if (mesCorrigido !== mes) setMes(mesCorrigido);
+    else await carregarDados();
+  }
+
   async function removerLancamento() {
     const diaExistente = dias.find((dia) => dia.data === form.data);
     if (!diaExistente) {
@@ -820,6 +829,7 @@ export default function Home() {
 
   return (
     <main className="dashboard">
+      <div className="dashboardTop">
       <header className="dashboardHeader">
         <div>
           <h1 className="greeting">
@@ -833,6 +843,9 @@ export default function Home() {
           <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
         </label>
       </header>
+
+      <AvisosCorrecoes key={sessao.user.id} supabase={supabase} usuarioId={sessao.user.id} onAbrir={abrirCorrecao} />
+      </div>
 
       <section className="card dailyCard">
         <div className="sectionHeading">
