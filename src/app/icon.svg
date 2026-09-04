@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PA">
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#fffaf6" stroke="#7b2948" stroke-width="3"/>
+  <path d="M2 20C12 12 19 8 27 2H2Z" fill="#c66b89" opacity="0.78"/>
+  <path d="M38 62c8-9 15-14 24-18v18Z" fill="#f7e8ed"/>
+  <text x="32" y="40" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" fill="#54192f">PA</text>
+  <path d="M21 45c8 2 16 2 24 0" fill="none" stroke="#c66b89" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M46 15l1.5-5M51 18l4-4M54 23l5-1" stroke="#c66b89" stroke-width="3" stroke-linecap="round"/>
+</svg>
