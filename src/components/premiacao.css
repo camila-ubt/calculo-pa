@@ -2,6 +2,58 @@
 .prizeEligible > span { font-weight: 400; }
 .prizeEligible .textButton { justify-self: start; font-size: 13px; }
 
+.prizeHelpDetails {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 8px;
+}
+
+.prizeHelpDetails summary {
+  list-style: none;
+  cursor: help;
+  color: var(--wine);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.prizeHelpDetails summary::-webkit-details-marker { display: none; }
+.prizeHelpDetails summary::after { content: " ⓘ"; text-decoration: none; }
+
+.prizeTooltip {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  width: min(430px, calc(100vw - 40px));
+  padding: 13px 14px;
+  border: 1px solid #ead7cd;
+  border-radius: 13px;
+  background: #fffaf7;
+  box-shadow: 0 16px 40px rgba(53, 19, 33, .18);
+  color: var(--wine-dark);
+  text-align: left;
+}
+
+.prizeHelpDetails:hover .prizeTooltip,
+.prizeHelpDetails:focus-within .prizeTooltip,
+.prizeHelpDetails[open] .prizeTooltip {
+  display: block;
+}
+
+.prizeTooltip p { margin: 0; font-size: 12px; line-height: 1.45; }
+.prizeTooltip ul { margin: 9px 0; padding-left: 19px; }
+.prizeTooltip li { margin: 4px 0; font-size: 12px; line-height: 1.38; }
+.prizeTooltipNote {
+  padding-top: 9px;
+  border-top: 1px solid #ead7cd;
+  color: var(--wine);
+}
+
 body:has(.prizeDialog[open]) { overflow: hidden; }
 .prizeDialog {
   width: min(360px, calc(100% - 24px));
@@ -37,6 +89,7 @@ body:has(.prizeDialog[open]) { overflow: hidden; }
 .prizeVerification { padding: 8px 10px; border: 1px solid #e6cbd4; border-radius: 10px; background: var(--rose-light); text-align: left; }
 .prizeVerification strong { display: block; margin-bottom: 3px; font-size: 12px; }
 .prizeVerification p { margin: 0; font-size: 12px; line-height: 1.35; }
+.prizeVerificationApproved { border-color: #d6c18d; background: #fff7df; }
 .prizeConfirm { width: 100%; margin-top: 10px; min-height: 40px; font-size: 13px; }
 .prizeConfetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .prizeConfetti i {
@@ -51,6 +104,20 @@ body:has(.prizeDialog[open]) { overflow: hidden; }
   15% { opacity: .85; }
   100% { opacity: 0; transform: translateY(400px) rotate(calc(var(--rotation) + 240deg)); }
 }
+
+@media (max-width: 760px) {
+  .prizeTooltip {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    top: auto;
+    bottom: 18px;
+    width: auto;
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .prizeDialog[open] .prizeConfetti i { animation: none; }
 }
