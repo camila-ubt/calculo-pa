@@ -42,7 +42,7 @@ main.dashboard {
 .dashboard .conferenceColumn {
   grid-area: conference;
   display: grid;
-  grid-template-columns: minmax(260px, .92fr) minmax(210px, .68fr);
+  grid-template-columns: minmax(245px, .84fr) minmax(230px, .76fr);
   grid-template-areas: "calendar history";
   gap: 16px;
   align-items: start;
@@ -101,7 +101,7 @@ main.dashboard {
 @media (max-width: 1100px) {
   main.dashboard { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); grid-template-areas: "header header" "aside aside" "daily conference"; gap: 14px; }
   .dashboard .dashboardAside { grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr); grid-template-areas: "summary prize"; }
-  .dashboard .conferenceColumn { grid-template-columns: minmax(220px, .9fr) minmax(180px, .7fr); grid-template-areas: "calendar history"; gap: 12px; }
+  .dashboard .conferenceColumn { grid-template-columns: minmax(210px, .82fr) minmax(195px, .78fr); grid-template-areas: "calendar history"; gap: 12px; }
   .dashboard .calendarDay { min-height: 34px; font-size: 11px; }
   .dashboard .calendarDay small { font-size: 8px; }
 }
