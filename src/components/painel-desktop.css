@@ -55,9 +55,16 @@ main.dashboard {
 .dashboard .prizeSection .summaryHeading h2 { font-size: 13px; }
 .dashboard .calendarCard h2 { font-size: 17px; margin-bottom: 0; }
 .dashboard .summaryGrid { gap: 5px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.dashboard .metric { min-height: 50px; padding: 3px 8px; overflow-wrap: anywhere; }
+.dashboard .metric {
+  min-height: 50px;
+  padding: 3px 8px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
 .dashboard .metric span { font-size: 10px; line-height: 1.15; }
-.dashboard .metric strong { margin-top: 0; font-size: 18px; line-height: 1.05; }
+.dashboard .metric strong { margin-top: 0; font-size: 18px; line-height: 1.05; text-align: center; }
 .dashboard .metricPa { background: var(--rose-light); border-color: #dcb4c3; }
 .dashboard .metricPa strong { color: var(--wine); }
 .dashboard .sectionHeading { margin-bottom: 8px; min-height: 64px; padding-right: 182px; }
