@@ -1,0 +1,53 @@
+name: Segurança e qualidade
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    name: Lint, testes, build e auditoria
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_apenas_teste
+      PA_PAINEL_ATIVO: "false"
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+
+      - name: Instalar dependências sem scripts de instalação
+        run: npm install --ignore-scripts --no-fund --no-audit
+
+      - name: Auditar dependências
+        run: npm audit --audit-level=high
+
+      - name: Executar lint
+        run: npm run lint
+
+      - name: Executar testes
+        run: node --test src/lib/*.test.mjs
+
+      - name: Validar build de produção
+        run: npm run build

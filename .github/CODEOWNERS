@@ -1,0 +1,9 @@
+# Todas as alterações devem passar pela responsável pelo projeto.
+* @camila-ubt
+
+# Áreas sensíveis destacadas para revisão obrigatória quando CODEOWNERS
+# estiver habilitado nas regras de proteção da main.
+/.github/ @camila-ubt
+/supabase/ @camila-ubt
+/.env.example @camila-ubt
+/next.config.mjs @camila-ubt
