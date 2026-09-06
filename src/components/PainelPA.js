@@ -134,7 +134,7 @@ export default function PainelPA() {
   const [mes, setMes] = useState(hojeLocal().slice(0, 7));
   const [lojas, setLojas] = useState([]);
   const [dias, setDias] = useState([]);
-  const [historicoAberto, setHistoricoAberto] = useState(false);
+  const [historicoAberto, setHistoricoAberto] = useState(true);
   const [lojaHistorico, setLojaHistorico] = useState("");
   const [periodoCarregado, setPeriodoCarregado] = useState(null);
   const ultimaCarga = useRef(0);
