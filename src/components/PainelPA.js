@@ -321,25 +321,6 @@ export default function PainelPA() {
     setProcessandoAuth(false);
   }
 
-  async function enviarRecuperacao(evento) {
-    evento.preventDefault();
-    setMensagem("");
-
-    if (!login.email.trim()) {
-      setMensagem("Informe seu e-mail.");
-      return;
-    }
-
-    setProcessandoAuth(true);
-    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/?recuperacao=1` : undefined;
-    const { error } = await supabase.auth.resetPasswordForEmail(login.email.trim(), { redirectTo });
-
-    if (error) setMensagem(error.message);
-    else setMensagem("Enviamos um link para redefinir sua senha. Confira seu e-mail.");
-
-    setProcessandoAuth(false);
-  }
-
   async function salvarNovaSenha(evento) {
     evento.preventDefault();
     setMensagem("");
@@ -746,8 +727,8 @@ export default function PainelPA() {
       <main className="loginPage">
         <section className="card loginCard">
           <div className="authBrand">PA</div>
-          <h1>{modoAuth === "cadastro" ? "Criar conta" : modoAuth === "recuperar" ? "Recuperar senha" : "Meu PA"}</h1>
-          <p className="muted">{modoAuth === "cadastro" ? "Crie seu acesso para acompanhar e lançar seu PA." : modoAuth === "recuperar" ? "Informe seu e-mail para receber o link de recuperação." : "Entre para lançar a quantidade de vendas e peças de cada loja."}</p>
+          <h1>{modoAuth === "cadastro" ? "Criar conta" : "Meu PA"}</h1>
+          <p className="muted">{modoAuth === "cadastro" ? "Crie seu acesso para acompanhar e lançar seu PA." : "Entre para lançar a quantidade de vendas e peças de cada loja."}</p>
 
           {modoAuth === "entrar" && (
             <form className="formStack" onSubmit={entrar}>
@@ -768,18 +749,11 @@ export default function PainelPA() {
             </form>
           )}
 
-          {modoAuth === "recuperar" && (
-            <form className="formStack" onSubmit={enviarRecuperacao}>
-              <label>E-mail<input type="email" required autoComplete="email" value={login.email} onChange={(e) => setLogin({ ...login, email: e.target.value })} /></label>
-              <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Enviando..." : "Enviar link de recuperação"}</button>
-            </form>
-          )}
-
           <div className="authActions">
             {modoAuth === "entrar" ? (
               <>
                 <button className="textButton" type="button" onClick={() => trocarModoAuth("cadastro")}>Criar conta</button>
-                <button className="textButton" type="button" onClick={() => trocarModoAuth("recuperar")}>Esqueci minha senha</button>
+                <a className="textButton" href="https://metas-lider.vercel.app/recuperar-senha">Esqueci minha senha</a>
               </>
             ) : (
               <button className="textButton" type="button" onClick={() => trocarModoAuth("entrar")}>Voltar para o login</button>
