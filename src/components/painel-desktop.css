@@ -17,7 +17,7 @@ main.dashboard {
   grid-template-areas: "summary prize";
   gap: 18px;
   align-items: stretch;
-  padding: 16px;
+  padding: 11px 14px;
   border: 1px solid #e5dfea;
   border-radius: 16px;
   background: #fff;
@@ -50,12 +50,12 @@ main.dashboard {
 }
 .dashboard .calendarCard { grid-area: calendar; }
 .dashboard .historySection { grid-area: history; }
-.dashboard .summaryHeading { margin-bottom: 10px; }
+.dashboard .summaryHeading { margin-bottom: 6px; }
 .dashboard .summaryHeading h2, .dashboard .calendarCard h2 { font-size: 17px; margin-bottom: 0; }
 .dashboard .summaryGrid { gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.dashboard .metric { padding: 12px; overflow-wrap: anywhere; }
+.dashboard .metric { padding: 8px 11px; overflow-wrap: anywhere; }
 .dashboard .metric span { font-size: 12px; }
-.dashboard .metric strong { margin-top: 4px; font-size: 24px; }
+.dashboard .metric strong { margin-top: 2px; font-size: 22px; }
 .dashboard .metricPa { background: var(--rose-light); border-color: #dcb4c3; }
 .dashboard .metricPa strong { color: var(--wine); }
 .dashboard .sectionHeading { margin-bottom: 10px; min-height: 68px; padding-right: 195px; }
@@ -77,10 +77,10 @@ main.dashboard {
 .dashboard .history { max-height: 220px; overflow-y: auto; }
 .dashboard .historyItem { grid-template-columns: 1fr; padding: 10px; gap: 5px; }
 .dashboard .historySummary { text-align: left; }
-.dashboard .prize { padding: 12px; margin-top: 0; line-height: 1.45; }
-.dashboard .prizeHelpDetails { width: 100%; margin-top: 10px; }
-.dashboard .prizeHelpDetails summary { cursor: pointer; font-size: 13px; padding: 6px 0; }
-.dashboard .prizeHelpDetails .prizeTooltip { position: static; width: 100%; max-height: 270px; overflow-y: auto; margin-top: 10px; box-shadow: none; }
+.dashboard .prize { padding: 9px 11px; margin-top: 0; line-height: 1.35; }
+.dashboard .prizeHelpDetails { width: 100%; margin-top: 5px; }
+.dashboard .prizeHelpDetails summary { cursor: pointer; font-size: 13px; padding: 3px 0; }
+.dashboard .prizeHelpDetails .prizeTooltip { position: static; width: 100%; max-height: 270px; overflow-y: auto; margin-top: 8px; box-shadow: none; }
 .dashboard .prizeHelpDetails:not([open]) .prizeTooltip { display: none; }
 .dashboard .prizeTooltip p, .dashboard .prizeTooltip li { font-size: 13px; line-height: 1.45; }
 .dashboard .calendarProgress { margin: 12px 0; padding: 9px 10px; background: var(--rose-light); border-radius: 10px; color: var(--wine-dark); font-size: 13px; font-weight: 700; }
@@ -104,12 +104,12 @@ main.dashboard {
 }
 @media (max-width: 900px) {
   .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; }
-  .dashboard .prizeSection { padding: 16px 0 0; border-left: 0; border-top: 1px solid #e5dfea; }
+  .dashboard .prizeSection { padding: 14px 0 0; border-left: 0; border-top: 1px solid #e5dfea; }
   .dashboard .summaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
   main.dashboard { width: calc(100% - 24px); padding: 16px 0 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "aside" "daily" "conference"; gap: 14px; }
-  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; padding: 14px; }
+  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; padding: 12px; }
   .dashboard .conferenceColumn { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 12px; }
   .dashboard .sectionHeading { min-height: 0; padding-right: 0; }
   .dashboard .dailyForm > label:first-child { position: static; width: 100%; max-width: none; }
