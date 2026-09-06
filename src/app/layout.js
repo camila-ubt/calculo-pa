@@ -1,7 +1,9 @@
+import LoginSecurityNotice from "@/components/LoginSecurityNotice";
 import "./globals.css";
 import "./calculadora-metas-theme.css";
 import "./compact-labels.css";
 import "./rodape-autoria.css";
+import "./login-security.css";
 
 export const metadata = {
   title: "Cálculo PA",
@@ -21,6 +23,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
+        <LoginSecurityNotice />
         <footer className="rodape-autoria">
           <span>© 2026 Cálculo PA</span>
           <span aria-hidden="true"> • </span>
