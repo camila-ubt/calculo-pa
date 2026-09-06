@@ -7,6 +7,7 @@ import "./premiacao.css";
 export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pronto }) {
   const supabase = useMemo(() => createClient(), []);
   const dialogRef = useRef(null);
+  const helpDialogRef = useRef(null);
   const celebracoesVistas = useRef(new Set());
   const [statusAprovacao, setStatusAprovacao] = useState("carregando");
   const valor = premio.valor;
@@ -120,9 +121,33 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
         )}
       </div>
 
-      <details className="prizeHelpDetails">
-        <summary>Como funciona a premiação</summary>
-        <div className="prizeTooltip" role="note">
+      <button
+        className="prizeHelpButton"
+        type="button"
+        onClick={() => helpDialogRef.current?.showModal()}
+        aria-haspopup="dialog"
+      >
+        Como funciona a premiação <span aria-hidden="true">ⓘ</span>
+      </button>
+
+      <dialog
+        ref={helpDialogRef}
+        className="prizeHelpDialog"
+        aria-labelledby="prizeHelpTitle"
+        onClick={(evento) => {
+          if (evento.target === evento.currentTarget) evento.currentTarget.close();
+        }}
+      >
+        <div className="prizeHelpContent">
+          <button
+            className="prizeClose"
+            type="button"
+            aria-label="Fechar regras da premiação"
+            onClick={() => helpDialogRef.current?.close()}
+          >
+            ×
+          </button>
+          <h2 id="prizeHelpTitle">Como funciona a premiação</h2>
           <p>
             A premiação é válida para PA final a partir de <strong>2,20</strong>, desde que todas as regras sejam cumpridas.
           </p>
@@ -138,8 +163,15 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
           <p className="prizeTooltipNote">
             Após a aprovação, aparecerá a confirmação da premiação e a orientação para aguardar as instruções da Vi no dia do pagamento.
           </p>
+          <button
+            className="primary prizeHelpConfirm"
+            type="button"
+            onClick={() => helpDialogRef.current?.close()}
+          >
+            Entendi
+          </button>
         </div>
-      </details>
+      </dialog>
 
       <dialog
         ref={dialogRef}
