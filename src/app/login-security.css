@@ -1,0 +1,21 @@
+.loginSecurityNotice {
+  display: grid;
+  gap: 3px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(123, 41, 72, 0.14);
+  border-radius: 12px;
+  color: var(--wine-dark);
+  background: var(--rose-light);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.loginSecurityNotice strong {
+  color: var(--wine);
+  font-size: 12px;
+}
+
+.loginSecurityNotice span {
+  color: var(--muted);
+}
