@@ -27,9 +27,9 @@ O projeto usa autenticação individual, políticas de **Row Level Security (RLS
 
 ## Documentação
 
-A documentação detalhada de funcionamento, banco de dados, regras de negócio, segurança, configuração e manutenção está em [`docs/wiki`](./docs/wiki/Home.md).
+📚 **[Acessar a Wiki completa do Cálculo PA](https://github.com/camila-ubt/calculo-pa/wiki)**
 
-> A documentação está organizada no formato da Wiki do GitHub e pode ser publicada na Wiki nativa do repositório quando ela estiver inicializada.
+A documentação detalhada de funcionamento, banco de dados, regras de negócio, segurança, configuração e manutenção também está versionada em [`docs/wiki`](./docs/wiki/Home.md).
 
 ## Versão
 
