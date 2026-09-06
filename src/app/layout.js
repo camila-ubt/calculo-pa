@@ -1,6 +1,7 @@
 import "./globals.css";
 import "./calculadora-metas-theme.css";
 import "./compact-labels.css";
+import "./rodape-autoria.css";
 
 export const metadata = {
   title: "Cálculo PA",
@@ -18,7 +19,26 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer className="rodape-autoria">
+          <span>© 2026 Cálculo PA</span>
+          <span aria-hidden="true"> • </span>
+          <a
+            href="https://github.com/camila-ubt/calculo-pa/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Ver releases do Cálculo PA"
+          >
+            v1.0.0
+          </a>
+          <span aria-hidden="true"> • </span>
+          <span>Desenvolvido por</span>{" "}
+          <a href="https://github.com/camila-ubt" target="_blank" rel="noopener noreferrer">
+            @camila-ubt
+          </a>
+        </footer>
+      </body>
     </html>
   );
 }
