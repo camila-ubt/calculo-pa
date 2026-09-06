@@ -16,11 +16,23 @@ ativo. Não existe rota pública de demonstração nem bypass de autenticação.
 Após concluir os ajustes de acesso, a mesma variável permite ativar o painel;
 remova-a e gere um novo build para voltar ao aviso.
 
-O container do painel usa até 1600px. A partir de 1100px, lançamento e resumo
-ficam lado a lado, com conferência abaixo do lançamento e premiação abaixo do resumo. Em tablets, o lançamento
-ocupa a largura inteira e resumo/premiação compartilham uma linha. Até 760px,
-os blocos ficam em uma coluna. O histórico inicia aberto e pode ser recolhido;
-as regras expandem dentro do próprio card, sem cobrir os campos.
+O container usa até 1720px. A partir de 1200px, três colunas mostram lançamento,
+calendário com histórico recolhido e resumo/PA com premiação. Em tablets são duas
+colunas, com o resumo abaixo; até 760px, os blocos ficam em uma coluna.
+Regras e histórico têm rolagem interna quando expandidos no desktop. A primeira
+tela foi validada em 1366×768 com três lojas selecionadas e os detalhes fechados;
+telas menores, zoom ampliado e conteúdo adicional podem exigir rolagem da página.
+
+O calendário usa os registros de `dias_pa` já carregados para o mês: ✓ lançado,
+! pendente, — não trabalhou/férias. Dias futuros ficam desabilitados. Pendências
+incluem datas sem registro desde o início do mês até hoje (ou o mês passado
+inteiro); não inferem escala de trabalho nem aprovação da premiação. Dias com
+zero vendas, férias e ausências registradas são considerados preenchidos.
+Durante carregamento ou falha, não exibe uma contagem de pendências e bloqueia
+a seleção. Clicar em uma data passada ou em hoje abre o formulário existente.
+Salvar ou remover recarrega os dados e atualiza o calendário.
+
+Teste da classificação e das datas: `node --test src/lib/calendario.test.mjs`.
 
 ## Integração
 

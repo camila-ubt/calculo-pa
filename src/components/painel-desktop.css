@@ -1,116 +1,82 @@
-/* Dashboard-only layout: the public development notice and login keep their sizing. */
+/* Compact desktop workspace; the public notice and login retain their layout. */
 main.dashboard {
-  width: min(calc(100% - 64px), 1600px);
-  padding: 28px 0 40px;
-  grid-template-columns: minmax(0, 1.45fr) minmax(340px, 1fr);
-  grid-template-rows: auto auto minmax(0, 1fr);
-  grid-template-areas:
-    "header header"
-    "daily aside"
-    "history aside";
-  gap: 24px;
+  width: min(calc(100% - 40px), 1720px);
+  padding: 18px 0 24px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr) minmax(260px, .85fr);
+  grid-template-rows: auto auto;
+  grid-template-areas: "header header header" "daily conference aside";
+  gap: 18px;
 }
-
-.dashboard .dashboardAside {
-  grid-area: aside;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "summary" "prize";
-  gap: 24px;
-}
-
-.dashboard > *,
-.dashboard .summaryGrid > *,
-.dashboard .dashboardHeader > div { min-width: 0; }
-.dashboard .dashboardHeader { padding: 0 0 4px; }
+.dashboard > *, .dashboard .summaryGrid > *, .dashboard .dashboardHeader > div { min-width: 0; }
 .dashboard .greeting { line-height: 1.2; overflow-wrap: anywhere; }
-.dashboard .dailyCard,
-.dashboard .summarySection,
-.dashboard .prizeSection { padding: 24px; }
+.dashboard .dailyCard, .dashboard .summarySection, .dashboard .prizeSection, .dashboard .calendarCard { padding: 16px; }
+.dashboard .dashboardAside { grid-area: aside; display: grid; grid-template-areas: "summary" "prize"; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.dashboard .conferenceColumn { grid-area: conference; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 12px; min-width: 0; }
+.dashboard .calendarCard { grid-area: calendar; }
 .dashboard .prizeSection { grid-area: prize; }
-.dashboard .dailyCard { container-type: inline-size; }
-.dashboard .summaryHeading { margin-bottom: 16px; }
-.dashboard .summaryHeading h2 { font-size: 20px; }
-.dashboard .summaryGrid { gap: 12px; }
-.dashboard .metric { padding: 18px; overflow-wrap: anywhere; }
-.dashboard .metric span { font-size: 13px; }
-.dashboard .metric strong { margin-top: 8px; font-size: 28px; }
+.dashboard .summaryHeading { margin-bottom: 10px; }
+.dashboard .summaryHeading h2, .dashboard .calendarCard h2 { font-size: 17px; margin-bottom: 0; }
+.dashboard .summaryGrid { gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dashboard .metric { padding: 12px; overflow-wrap: anywhere; }
+.dashboard .metric span { font-size: 12px; }
+.dashboard .metric strong { margin-top: 4px; font-size: 24px; }
 .dashboard .metricPa { background: var(--rose-light); border-color: #dcb4c3; }
 .dashboard .metricPa strong { color: var(--wine); }
-.dashboard .sectionHeading { margin-bottom: 16px; }
-.dashboard .dailyForm { gap: 18px; }
-.dashboard .choiceGrid { gap: 8px; width: 100%; max-width: none; }
-.dashboard .choiceButton { min-height: 40px; white-space: normal; overflow-wrap: anywhere; }
-.dashboard .selectedStores { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.dashboard .storeEntry { padding: 14px; }
-.dashboard .storeEntryHeader { flex-wrap: wrap; }
-.dashboard .dailyTotal { flex-wrap: wrap; padding: 12px; }
-.dashboard .dailyForm > label:first-child { top: 24px; right: 24px; }
-.dashboard .dateNavigation { top: 68px; right: 24px; }
-.dashboard .dateNavButton { min-height: 30px; }
-.dashboard .historyToggle { padding: 18px 20px; font-size: 17px; }
-.dashboard .historyPanel { padding: 18px; margin-top: 10px; }
-.dashboard .historyFilter { max-width: 300px; }
-.dashboard .history { max-height: 420px; overflow-y: auto; }
-.dashboard .historyItem { padding: 12px; gap: 16px; }
-.dashboard .historyItem,
-.dashboard .historySummary,
-.dashboard .historyItem > div span { font-size: 13px; }
-.dashboard .prize { padding: 14px; margin-top: 0; line-height: 1.5; }
-
-/* Rules expand in normal flow, without covering the form or escaping the screen. */
-.dashboard .prizeHelpDetails { width: 100%; margin-top: 18px; }
-.dashboard .prizeHelpDetails summary { cursor: pointer; font-size: 14px; padding: 6px 0; }
-.dashboard .prizeHelpDetails .prizeTooltip {
-  position: static;
-  width: 100%;
-  max-height: none;
-  margin-top: 12px;
-  box-shadow: none;
-}
+.dashboard .sectionHeading { margin-bottom: 10px; min-height: 68px; padding-right: 195px; }
+.dashboard .dailyForm { gap: 12px; }
+.dashboard .choiceGrid { gap: 6px; width: 100%; max-width: none; }
+.dashboard .choiceButton { min-height: 36px; white-space: normal; overflow-wrap: anywhere; }
+.dashboard .selectedStores { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.dashboard .storeEntry { padding: 9px 10px; display: grid; grid-template-columns: minmax(85px, .8fr) minmax(0, 1.5fr); align-items: center; gap: 10px; }
+.dashboard .storeEntryHeader { display: grid; gap: 4px; margin: 0; }
+.dashboard .storeFields { min-width: 0; }
+.dashboard .dailyTotal { flex-wrap: wrap; padding: 10px; }
+.dashboard .dailyForm > label:first-child { top: 16px; right: 16px; }
+.dashboard .dateNavigation { top: 58px; right: 16px; }
+.dashboard .dateNavButton { min-height: 28px; }
+.dashboard .launchActions { flex-wrap: nowrap; }
+.dashboard .launchActions .saveButton { width: auto; flex: 1; }
+.dashboard .historyToggle { padding: 12px; font-size: 14px; }
+.dashboard .historyPanel { padding: 12px; margin-top: 8px; }
+.dashboard .history { max-height: 220px; overflow-y: auto; }
+.dashboard .historyItem { grid-template-columns: 1fr; padding: 10px; gap: 5px; }
+.dashboard .historySummary { text-align: left; }
+.dashboard .prize { padding: 12px; margin-top: 0; line-height: 1.45; }
+.dashboard .prizeHelpDetails { width: 100%; margin-top: 10px; }
+.dashboard .prizeHelpDetails summary { cursor: pointer; font-size: 13px; padding: 6px 0; }
+.dashboard .prizeHelpDetails .prizeTooltip { position: static; width: 100%; max-height: 270px; overflow-y: auto; margin-top: 10px; box-shadow: none; }
 .dashboard .prizeHelpDetails:not([open]) .prizeTooltip { display: none; }
-.dashboard .prizeTooltip p,
-.dashboard .prizeTooltip li { font-size: 14px; line-height: 1.5; }
-
-@container (max-width: 680px) {
-  .dashboard .selectedStores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dashboard .prizeTooltip p, .dashboard .prizeTooltip li { font-size: 13px; line-height: 1.45; }
+.dashboard .calendarProgress { margin: 12px 0; padding: 9px 10px; background: var(--rose-light); border-radius: 10px; color: var(--wine-dark); font-size: 13px; font-weight: 700; }
+.dashboard .calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.dashboard .calendarWeekday { font-size: 11px; text-align: center; color: var(--muted); padding-bottom: 4px; }
+.dashboard .calendarDay { min-width: 0; min-height: 42px; border: 1px solid var(--line); border-radius: 9px; padding: 4px 0; display: grid; place-items: center; gap: 1px; background: #faf8f7; color: var(--muted); font-size: 13px; font-weight: 700; }
+.dashboard .calendarDay small { font-size: 10px; line-height: 1; }
+.dashboard .calendarDay.lancado { background: #e9f3ed; color: #235e3d; border-color: #c3ddcb; }
+.dashboard .calendarDay.ausencia { background: #eeeaf6; color: #5d477e; border-color: #d8cce9; }
+.dashboard .calendarDay.pendente { background: #fff3e0; color: #845207; border-color: #ebd0a3; }
+.dashboard .calendarDay:disabled { cursor: default; opacity: .65; }
+.dashboard .calendarDay[aria-current="date"] > span { text-decoration: underline; text-underline-offset: 3px; }
+.dashboard .calendarDay[aria-pressed="true"] { outline: 2px solid var(--wine); outline-offset: 1px; }
+.dashboard .calendarDay:focus-visible { outline: 3px solid var(--wine); outline-offset: 2px; }
+.dashboard .calendarLegend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 12px; font-size: 11px; color: var(--muted); }
+.dashboard .calendarHelp { margin: 10px 0 0; font-size: 11px; line-height: 1.4; }
+@media (max-width: 1199px) {
+  main.dashboard { grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr); grid-template-areas: "header header" "daily conference" "aside aside"; }
+  .dashboard .dashboardAside { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "summary prize"; }
 }
-
-@container (max-width: 440px) {
-  .dashboard .selectedStores { grid-template-columns: minmax(0, 1fr); }
-}
-
-@media (max-width: 1099px) {
-  main.dashboard {
-    width: calc(100% - 40px);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas: "header header" "daily daily" "summary prize" "history history";
-    gap: 20px;
-  }
-  .dashboard .dashboardAside { display: contents; }
-  .dashboard .summaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
 @media (max-width: 760px) {
-  main.dashboard {
-    width: calc(100% - 24px);
-    padding: 20px 0 28px;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "header" "daily" "summary" "prize" "history";
-    gap: 16px;
-  }
-  .dashboard .dailyCard,
-  .dashboard .summarySection,
-  .dashboard .prizeSection { padding: 18px 14px; }
+  main.dashboard { width: calc(100% - 24px); padding: 16px 0 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "daily" "conference" "aside"; gap: 14px; }
+  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; }
   .dashboard .sectionHeading { min-height: 0; padding-right: 0; }
   .dashboard .dailyForm > label:first-child { position: static; width: 100%; max-width: none; }
   .dashboard .dateNavigation { position: static; width: 100%; gap: 8px; }
-  .dashboard .dateNavButton { min-height: 38px; font-size: 12px; }
+  .dashboard .dateNavButton { min-height: 40px; font-size: 12px; }
   .dashboard .choiceButton { min-height: 44px; }
-  .dashboard .selectedStores { grid-template-columns: minmax(0, 1fr); }
-  .dashboard .metric { padding: 14px; }
-  .dashboard .metric strong { font-size: 24px; }
-  .dashboard .history { max-height: none; overflow: visible; }
-  .dashboard .historyToggle { padding: 16px 14px; font-size: 16px; }
-  .dashboard .historyPanel { padding: 12px; }
+  .dashboard .calendarDay { min-height: 44px; }
+  .dashboard .storeEntry { display: block; }
+  .dashboard .storeEntryHeader { display: flex; flex-wrap: wrap; margin-bottom: 8px; }
+  .dashboard .storeFields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard .launchActions { flex-wrap: wrap; }
+  .dashboard .prizeHelpDetails .prizeTooltip { max-height: none; overflow: visible; }
 }

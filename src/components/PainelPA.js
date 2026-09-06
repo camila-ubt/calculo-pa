@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import PremiacaoMensal from "@/components/PremiacaoMensal";
 import AvisosCorrecoes from "@/components/AvisosCorrecoes";
 import { premioDoMes } from "@/lib/premiacao.mjs";
+import CalendarioLancamentos from "@/components/CalendarioLancamentos";
 import "./painel-desktop.css";
 
 function hojeLocal() {
@@ -133,10 +134,11 @@ export default function PainelPA() {
   const [mes, setMes] = useState(hojeLocal().slice(0, 7));
   const [lojas, setLojas] = useState([]);
   const [dias, setDias] = useState([]);
-  const [historicoAberto, setHistoricoAberto] = useState(true);
+  const [historicoAberto, setHistoricoAberto] = useState(false);
   const [lojaHistorico, setLojaHistorico] = useState("");
   const [periodoCarregado, setPeriodoCarregado] = useState(null);
   const ultimaCarga = useRef(0);
+  const dataInputRef = useRef(null);
   const [form, setForm] = useState(formularioVazio([]));
 
   useEffect(() => {
@@ -841,7 +843,7 @@ export default function PainelPA() {
 
         <label className="monthControl">
           Mês
-          <input type="month" value={mes} onChange={(e) => setMes(e.target.value)} />
+          <input type="month" value={mes} onChange={(e) => { if (e.target.value) setMes(e.target.value); }} />
         </label>
       </header>
 
@@ -861,6 +863,7 @@ export default function PainelPA() {
             Data do lançamento
             <input
               type="date"
+              ref={dataInputRef}
               required
               max={hojeLocal()}
               value={form.data}
@@ -1030,34 +1033,13 @@ export default function PainelPA() {
         {mensagem && <p className="message">{mensagem}</p>}
       </section>
 
-      <div className="dashboardAside">
-      <section className="summarySection" aria-label="Resumo do mês">
-        <div className="summaryHeading">
-          <h2>Resumo do mês</h2>
-        </div>
-        <div className="summaryGrid">
-          <div className="metric"><span>Dias válidos</span><strong>{resumoMes.diasValidos}</strong></div>
-          <div className="metric"><span>Quantidade de vendas</span><strong>{resumoMes.vendas}</strong></div>
-          <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
-          <div className="metric metricPa"><span>PA do mês</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
-        </div>
-      </section>
-
-      <section className="card prizeSection" aria-labelledby="premiacaoHeading">
-        <div className="summaryHeading">
-          <h2 id="premiacaoHeading">Regras e premiação</h2>
-        </div>
-        <PremiacaoMensal
-          key={sessao.user.id}
-          mes={mes}
-          premio={premiacao}
-          valorPa={resumoMes.pa}
-          diasValidos={resumoMes.diasValidos}
-          pronto={dadosProntos && !salvando}
-        />
-      </section>
-      </div>
-
+      <div className="conferenceColumn">
+        <CalendarioLancamentos mes={mes} dias={dias} hoje={hojeLocal()} selecionado={form.data}
+          pronto={dadosProntos} carregando={carregando} salvando={salvando}
+          onSelecionar={(data) => {
+            selecionarData(data);
+            dataInputRef.current?.focus();
+          }} />
       <section className="historySection">
         <button
           className="historyToggle"
@@ -1114,6 +1096,35 @@ export default function PainelPA() {
           </div>
         )}
       </section>
+      </div>
+      <div className="dashboardAside">
+      <section className="summarySection" aria-label="Resumo do mês">
+        <div className="summaryHeading">
+          <h2>Resumo do mês</h2>
+        </div>
+        <div className="summaryGrid">
+          <div className="metric"><span>Dias válidos</span><strong>{resumoMes.diasValidos}</strong></div>
+          <div className="metric"><span>Quantidade de vendas</span><strong>{resumoMes.vendas}</strong></div>
+          <div className="metric"><span>Peças</span><strong>{resumoMes.pecas}</strong></div>
+          <div className="metric metricPa"><span>PA do mês</span><strong>{resumoMes.pa.toFixed(2).replace(".", ",")}</strong></div>
+        </div>
+      </section>
+
+      <section className="card prizeSection" aria-labelledby="premiacaoHeading">
+        <div className="summaryHeading">
+          <h2 id="premiacaoHeading">Regras e premiação</h2>
+        </div>
+        <PremiacaoMensal
+          key={sessao.user.id}
+          mes={mes}
+          premio={premiacao}
+          valorPa={resumoMes.pa}
+          diasValidos={resumoMes.diasValidos}
+          pronto={dadosProntos && !salvando}
+        />
+      </section>
+      </div>
+
     </main>
   );
 }
