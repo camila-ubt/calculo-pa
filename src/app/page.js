@@ -1,4 +1,9 @@
+import PainelPA from "@/components/PainelPA";
+
 export default function Home() {
+  // Activate only after the access/login work is ready. The public notice stays the default.
+  if (process.env.PA_PAINEL_ATIVO === "true") return <PainelPA />;
+
   return (
     <main
       style={{

@@ -105,10 +105,10 @@ export default function PremiacaoMensal({ mes, premio, valorPa, diasValidos, pro
     <>
       <div className={`prize ${pronto && valor ? "prizeEligible" : ""}`}>
         <strong>{conteudoPremiacao}</strong>
-        {pronto && valor && !aprovado && statusAprovacao !== "reprovada" && (
+        {pronto && Boolean(valor) && !aprovado && statusAprovacao !== "reprovada" && (
           <span>PA dentro da faixa de R$ {valor} em peças.</span>
         )}
-        {pronto && valor && aprovado && (
+        {pronto && Boolean(valor) && aprovado && (
           <button
             className="textButton"
             type="button"
