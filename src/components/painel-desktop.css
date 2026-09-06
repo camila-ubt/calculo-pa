@@ -3,20 +3,56 @@ main.dashboard {
   width: min(calc(100% - 40px), 1720px);
   padding: 18px 0 24px;
   grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr) minmax(260px, .85fr);
-  grid-template-rows: auto auto;
-  grid-template-areas: "header header header" "daily conference aside";
+  grid-template-rows: auto auto auto;
+  grid-template-areas: "header header header" "aside aside aside" "daily conference conference";
   gap: 18px;
 }
 .dashboard > *, .dashboard .summaryGrid > *, .dashboard .dashboardHeader > div { min-width: 0; }
 .dashboard .greeting { line-height: 1.2; overflow-wrap: anywhere; }
-.dashboard .dailyCard, .dashboard .summarySection, .dashboard .prizeSection, .dashboard .calendarCard { padding: 16px; }
-.dashboard .dashboardAside { grid-area: aside; display: grid; grid-template-areas: "summary" "prize"; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-.dashboard .conferenceColumn { grid-area: conference; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 12px; min-width: 0; }
+.dashboard .dailyCard, .dashboard .calendarCard { padding: 16px; }
+.dashboard .dashboardAside {
+  grid-area: aside;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .55fr);
+  grid-template-areas: "summary prize";
+  gap: 18px;
+  align-items: stretch;
+  padding: 16px;
+  border: 1px solid #e5dfea;
+  border-radius: 16px;
+  background: #fff;
+}
+.dashboard .summarySection {
+  grid-area: summary;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.dashboard .prizeSection {
+  grid-area: prize;
+  margin: 0;
+  padding: 0 0 0 18px;
+  border: 0;
+  border-left: 1px solid #e5dfea;
+  border-radius: 0;
+  background: transparent;
+}
+.dashboard .conferenceColumn {
+  grid-area: conference;
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(260px, .85fr);
+  grid-template-areas: "calendar history";
+  gap: 18px;
+  align-items: start;
+  min-width: 0;
+}
 .dashboard .calendarCard { grid-area: calendar; }
-.dashboard .prizeSection { grid-area: prize; }
+.dashboard .historySection { grid-area: history; }
 .dashboard .summaryHeading { margin-bottom: 10px; }
 .dashboard .summaryHeading h2, .dashboard .calendarCard h2 { font-size: 17px; margin-bottom: 0; }
-.dashboard .summaryGrid { gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dashboard .summaryGrid { gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .dashboard .metric { padding: 12px; overflow-wrap: anywhere; }
 .dashboard .metric span { font-size: 12px; }
 .dashboard .metric strong { margin-top: 4px; font-size: 24px; }
@@ -62,12 +98,19 @@ main.dashboard {
 .dashboard .calendarLegend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 12px; font-size: 11px; color: var(--muted); }
 .dashboard .calendarHelp { margin: 10px 0 0; font-size: 11px; line-height: 1.4; }
 @media (max-width: 1199px) {
-  main.dashboard { grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr); grid-template-areas: "header header" "daily conference" "aside aside"; }
-  .dashboard .dashboardAside { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "summary prize"; }
+  main.dashboard { grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr); grid-template-areas: "header header" "aside aside" "daily conference"; }
+  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); grid-template-areas: "summary prize"; }
+  .dashboard .conferenceColumn { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 12px; }
+}
+@media (max-width: 900px) {
+  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; }
+  .dashboard .prizeSection { padding: 16px 0 0; border-left: 0; border-top: 1px solid #e5dfea; }
+  .dashboard .summaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
-  main.dashboard { width: calc(100% - 24px); padding: 16px 0 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "daily" "conference" "aside"; gap: 14px; }
-  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; }
+  main.dashboard { width: calc(100% - 24px); padding: 16px 0 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "header" "aside" "daily" "conference"; gap: 14px; }
+  .dashboard .dashboardAside { grid-template-columns: minmax(0, 1fr); grid-template-areas: "summary" "prize"; padding: 14px; }
+  .dashboard .conferenceColumn { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 12px; }
   .dashboard .sectionHeading { min-height: 0; padding-right: 0; }
   .dashboard .dailyForm > label:first-child { position: static; width: 100%; max-width: none; }
   .dashboard .dateNavigation { position: static; width: 100%; gap: 8px; }
