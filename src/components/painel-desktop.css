@@ -9,8 +9,7 @@ main.dashboard {
 }
 .dashboard > *, .dashboard .summaryGrid > *, .dashboard .dashboardHeader > div { min-width: 0; }
 .dashboard .greeting { line-height: 1.2; overflow-wrap: anywhere; }
-.dashboard .dailyCard { padding: 14px; }
-.dashboard .calendarCard { padding: 0; overflow: hidden; }
+.dashboard .dailyCard, .dashboard .calendarCard { padding: 14px; }
 .dashboard .dashboardAside {
   grid-area: aside;
   display: grid;
@@ -43,45 +42,18 @@ main.dashboard {
 .dashboard .conferenceColumn {
   grid-area: conference;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "calendar" "history";
-  gap: 10px;
-  align-content: start;
+  grid-template-columns: minmax(245px, .84fr) minmax(230px, .76fr);
+  grid-template-areas: "calendar history";
+  gap: 16px;
+  align-items: start;
   min-width: 0;
 }
 .dashboard .calendarCard { grid-area: calendar; }
 .dashboard .historySection { grid-area: history; }
-.dashboard .calendarToggle,
-.dashboard .historyToggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 11px 12px;
-  color: #342b38;
-  font-size: 13px;
-  font-weight: 800;
-  text-align: left;
-}
-.dashboard .calendarToggle {
-  list-style: none;
-  cursor: pointer;
-  background: #fff;
-}
-.dashboard .calendarToggle::-webkit-details-marker { display: none; }
-.dashboard .calendarToggle::after {
-  content: "+";
-  color: #6f3fa0;
-  font-size: 19px;
-  line-height: 1;
-}
-.dashboard .calendarCard[open] > .calendarToggle::after { content: "−"; }
-.dashboard .calendarCard[open] > .calendarToggle { border-bottom: 1px solid #ece6ef; }
-.dashboard .calendarBody { padding: 10px 14px 12px; }
 .dashboard .summaryHeading { margin-bottom: 1px; }
 .dashboard .summaryHeading h2 { font-size: 15px; margin-bottom: 0; line-height: 1.1; }
 .dashboard .prizeSection .summaryHeading h2 { font-size: 13px; }
+.dashboard .calendarCard h2 { font-size: 17px; margin-bottom: 0; }
 .dashboard .summaryGrid { gap: 5px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .dashboard .metric { min-height: 50px; padding: 3px 8px; overflow-wrap: anywhere; }
 .dashboard .metric span { font-size: 10px; line-height: 1.15; }
@@ -102,8 +74,7 @@ main.dashboard {
 .dashboard .dateNavButton { min-height: 26px; padding-inline: 10px; }
 .dashboard .launchActions { flex-wrap: nowrap; }
 .dashboard .launchActions .saveButton { width: auto; flex: 1; }
-.dashboard .historyToggle { border: 1px solid #e5dfea; border-radius: 12px; background: #fff; }
-.dashboard .historyToggle span:last-child { color: #6f3fa0; font-size: 19px; line-height: 1; }
+.dashboard .historyToggle { padding: 11px 12px; font-size: 13px; }
 .dashboard .historyPanel { padding: 10px; margin-top: 7px; }
 .dashboard .history { max-height: 210px; overflow-y: auto; }
 .dashboard .historyItem { grid-template-columns: 1fr; padding: 9px; gap: 4px; }
@@ -114,7 +85,7 @@ main.dashboard {
 .dashboard .prizeHelpDetails .prizeTooltip { position: static; width: 100%; max-height: 270px; overflow-y: auto; margin-top: 7px; box-shadow: none; }
 .dashboard .prizeHelpDetails:not([open]) .prizeTooltip { display: none; }
 .dashboard .prizeTooltip p, .dashboard .prizeTooltip li { font-size: 13px; line-height: 1.45; }
-.dashboard .calendarProgress { margin: 0 0 10px; padding: 8px 9px; background: var(--rose-light); border-radius: 10px; color: var(--wine-dark); font-size: 12px; font-weight: 700; }
+.dashboard .calendarProgress { margin: 10px 0; padding: 8px 9px; background: var(--rose-light); border-radius: 10px; color: var(--wine-dark); font-size: 12px; font-weight: 700; }
 .dashboard .calendarGrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
 .dashboard .calendarWeekday { font-size: 10px; text-align: center; color: var(--muted); padding-bottom: 3px; }
 .dashboard .calendarDay { min-width: 0; min-height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 3px 0; display: grid; place-items: center; gap: 1px; background: #faf8f7; color: var(--muted); font-size: 12px; font-weight: 700; }
@@ -131,7 +102,7 @@ main.dashboard {
 @media (max-width: 1100px) {
   main.dashboard { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); grid-template-areas: "header header" "aside aside" "daily conference"; gap: 14px; }
   .dashboard .dashboardAside { grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr); grid-template-areas: "summary prize"; }
-  .dashboard .conferenceColumn { grid-template-columns: minmax(0, 1fr); grid-template-areas: "calendar" "history"; gap: 10px; }
+  .dashboard .conferenceColumn { grid-template-columns: minmax(210px, .82fr) minmax(195px, .78fr); grid-template-areas: "calendar history"; gap: 12px; }
   .dashboard .calendarDay { min-height: 34px; font-size: 11px; }
   .dashboard .calendarDay small { font-size: 8px; }
 }
