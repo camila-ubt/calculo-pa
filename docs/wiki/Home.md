@@ -29,14 +29,14 @@ Exemplo: 52 peças / 20 vendas = **PA 2,60**.
 
 ## Navegação da documentação
 
-- [Visão geral e fluxo](Visao-Geral.md)
-- [Uso pela vendedora](Uso-da-Vendedora.md)
-- [Regras de negócio e premiação](Regras-de-Negocio.md)
-- [Banco de dados](Banco-de-Dados.md)
-- [Segurança e permissões](Seguranca-e-Permissoes.md)
-- [Conferência administrativa](Conferencia-Administrativa.md)
-- [Arquitetura, tecnologias e deploy](Arquitetura-e-Deploy.md)
-- [Manutenção e evolução](Manutencao.md)
+- [Visão geral e fluxo](Visao-Geral)
+- [Uso pela vendedora](Uso-da-Vendedora)
+- [Regras de negócio e premiação](Regras-de-Negocio)
+- [Banco de dados](Banco-de-Dados)
+- [Segurança e permissões](Seguranca-e-Permissoes)
+- [Conferência administrativa](Conferencia-Administrativa)
+- [Arquitetura, tecnologias e deploy](Arquitetura-e-Deploy)
+- [Manutenção e evolução](Manutencao)
 
 ## Stack
 
