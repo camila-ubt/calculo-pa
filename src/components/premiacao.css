@@ -2,25 +2,42 @@
 .prizeEligible > span { font-weight: 400; }
 .prizeEligible .textButton { justify-self: start; font-size: 13px; }
 
-.prizeHelpButton {
+.prizeHelpButton,
+.dashboard .prizeSection .prizeHelpButton {
+  -webkit-appearance: none;
+  appearance: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
   width: fit-content;
   max-width: 100%;
+  min-height: 28px;
   margin-top: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  padding: 4px 9px;
+  border: 1px solid rgba(123, 41, 72, .16);
+  border-radius: 999px;
+  background: var(--rose-light);
   color: var(--wine);
-  font: inherit;
+  box-shadow: none;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   line-height: 1.15;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
+  text-decoration: none;
   cursor: pointer;
+}
+
+.prizeHelpButton:hover,
+.dashboard .prizeSection .prizeHelpButton:hover {
+  border-color: rgba(123, 41, 72, .3);
+  background: #f3dfe6;
+}
+
+.prizeHelpButton:focus-visible,
+.dashboard .prizeSection .prizeHelpButton:focus-visible {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(198, 107, 137, .13);
 }
 
 body:has(.prizeDialog[open]),
