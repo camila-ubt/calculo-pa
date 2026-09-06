@@ -712,7 +712,7 @@ export default function PainelPA() {
             </label>
             <label>
               Confirmar nova senha
-              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
+              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
             </label>
             <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Alterando..." : "Salvar nova senha"}</button>
           </form>
@@ -1035,6 +1035,17 @@ export default function PainelPA() {
               </select>
             </label>
             {lojaHistorico && <p className="helperText">Vendas, peças e PA abaixo são somente desta loja. O resumo do mês considera todas as lojas.</p>}
+            {lojaHistorico && (() => {
+              const registrosLoja = dias.flatMap((dia) => (dia.lancamentos_pa || []).filter((item) => String(item.loja_id) === lojaHistorico));
+              const vendasLoja = registrosLoja.reduce((soma, item) => soma + Number(item.vendas || 0), 0);
+              const pecasLoja = registrosLoja.reduce((soma, item) => soma + Number(item.pecas || 0), 0);
+              return (
+                <div className="dailyTotal historyStoreSummary">
+                  <span>{lojasDoHistorico.get(lojaHistorico)} no mês</span>
+                  <strong>{vendasLoja} vendas · {pecasLoja} peças · PA {pa(pecasLoja, vendasLoja).toFixed(2).replace(".", ",")}</strong>
+                </div>
+              );
+            })()}
             {carregando ? (
               <p>Carregando...</p>
             ) : !dadosProntos ? (
