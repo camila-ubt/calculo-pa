@@ -69,7 +69,7 @@ main.dashboard {
 .dashboard .storeFields { min-width: 0; }
 .dashboard .dailyTotal { flex-wrap: wrap; padding: 8px 9px; }
 .dashboard .dailyForm > label:first-child { top: 14px; right: 14px; max-width: 255px; }
-.dashboard .dateNavigation { top: 52px; right: 14px; }
+.dashboard .dateNavigation { top: 60px; right: 14px; }
 .dashboard .dateNavButton { min-height: 26px; padding-inline: 10px; }
 .dashboard .launchActions { flex-wrap: nowrap; }
 .dashboard .launchActions .saveButton { width: auto; flex: 1; }
