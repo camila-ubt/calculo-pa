@@ -46,4 +46,4 @@ O repositório possui automações para:
 
 ## Releases
 
-A documentação corresponde à versão inicial **v1.0.0**. Alterações de regra de negócio devem ser refletidas tanto no código quanto nesta documentação.
+A documentação corresponde à versão **v1.1.0**. Alterações de regra de negócio devem ser refletidas tanto no código quanto nesta documentação.

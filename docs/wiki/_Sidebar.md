@@ -9,3 +9,5 @@
 - [Conferência administrativa](Conferencia-Administrativa)
 - [Arquitetura e deploy](Arquitetura-e-Deploy)
 - [Manutenção](Manutencao)
+
+- [Histórico de versões](Releases)

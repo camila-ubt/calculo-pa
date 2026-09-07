@@ -33,6 +33,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.0.0**
+**v1.1.0**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
