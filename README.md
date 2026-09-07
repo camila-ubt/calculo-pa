@@ -15,18 +15,17 @@ Aplicação web para lançamento, cálculo e acompanhamento do **PA das vendedor
 
 ## Capturas do sistema
 
-As capturas de tela ainda não estão disponíveis no repositório. Para documentar o sistema, salve as imagens em `docs/imagens/`, com os seguintes nomes:
+### Painel no desktop
 
-| Tela | O que capturar | Arquivo |
-| --- | --- | --- |
-| Login | Formulário de acesso ao sistema. | `login.png` |
-| Lançamento diário | Data, loja, vendas, peças e PA calculado. | `lancamento-diario.png` |
-| Calendário e histórico | Visão mensal com os dias registrados e seus lançamentos. | `calendario-historico.png` |
-| Resumo do mês | Totais de vendas, peças e PA por loja. | `resumo-mensal.png` |
-| Premiação | Regras, resultado mensal e status de aprovação. | `premiacao.png` |
-| Conferência administrativa | Seleção de loja e detalhamento dos resultados para conferência. | `conferencia-administrativa.png` |
+Lançamento diário com cálculo do PA, calendário, histórico e resumo mensal. Na captura de agosto de 2026, a premiação está aguardando conferência e aprovação.
 
-Use dados fictícios nas capturas. Quando os arquivos estiverem disponíveis, exiba cada imagem nesta seção com uma legenda e um caminho relativo, como `![Tela de login do Cálculo PA](./docs/imagens/login.png)`.
+![Painel do Cálculo PA no desktop com lançamento, calendário, histórico e resumo de agosto de 2026](./docs/imagens/painel-desktop.jpg)
+
+### Regras de premiação
+
+Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições para aprovação da premiação.
+
+![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
 ## Tecnologias
 
