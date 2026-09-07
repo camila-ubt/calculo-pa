@@ -48,6 +48,6 @@ O Cálculo PA utiliza o **mesmo projeto Supabase do Líder Metas**, permitindo c
 
 ## Versão documentada
 
-**v1.0.0**
+**v1.1.0**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
