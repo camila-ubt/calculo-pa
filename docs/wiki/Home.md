@@ -46,8 +46,12 @@ Next.js, JavaScript, Supabase, PostgreSQL e Vercel.
 
 O Cálculo PA utiliza o **mesmo projeto Supabase do Líder Metas**, permitindo compartilhar cadastros e estruturas de apoio sem misturar as regras específicas do PA.
 
-## Versão documentada
+## Última versão estável
 
-**v1.1.0**
+<!-- versao-estavel:inicio -->
+**Última versão estável: [v1.1.0](https://github.com/camila-ubt/calculo-pa/releases/tag/v1.1.0)**
+<!-- versao-estavel:fim -->
+
+Atualizada automaticamente a partir da release mais recente do GitHub. Consulte as [notas da última versão](https://github.com/camila-ubt/calculo-pa/releases/latest).
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).

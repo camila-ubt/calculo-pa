@@ -2,22 +2,47 @@ name: Publicar Wiki
 
 on:
   workflow_dispatch:
+  release:
+    types: [published, edited, deleted]
+  # Releases criadas com GITHUB_TOKEN não disparam outro workflow de release.
+  workflow_run:
+    workflows: ["Publicar release"]
+    types: [completed]
+    branches: [main]
   push:
     branches:
       - main
     paths:
       - "docs/wiki/**"
       - ".github/workflows/publicar-wiki.yml"
+      - "scripts/atualizar-versao-wiki*.mjs"
 
 permissions:
   contents: write
 
+concurrency:
+  group: publicar-wiki
+  cancel-in-progress: false
+
 jobs:
   publicar:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Validar atualização da versão
+        run: node --test scripts/atualizar-versao-wiki.test.mjs
+
+      - name: Consultar última release estável
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/atualizar-versao-wiki.mjs
 
       - name: Publicar páginas na Wiki
         env:

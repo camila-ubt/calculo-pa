@@ -65,6 +65,14 @@ Antes de publicar uma nova versão:
 - revisar a área administrativa;
 - atualizar release e documentação.
 
+## Versão estável na Wiki
+
+A página inicial e o rodapé da Wiki mostram automaticamente a release estável marcada como mais recente no GitHub. A automação consulta `releases/latest`, sem usar rascunhos ou pré-releases. O histórico de releases e os textos das regras continuam sendo revisados manualmente.
+
+A publicação roda quando a documentação muda, quando uma release é publicada, editada ou excluída e após o sucesso da automação **Publicar release**. Também pode ser executada manualmente em **Actions → Publicar Wiki → Run workflow**. Os blocos entre `versao-estavel:inicio` e `versao-estavel:fim` são preenchidos no momento da publicação; preserve esses marcadores nos arquivos de origem.
+
+Se não houver nenhuma release estável disponível, a publicação falha antes de alterar a Wiki.
+
 ## Referências do projeto
 
 - Repositório: `camila-ubt/calculo-pa`
