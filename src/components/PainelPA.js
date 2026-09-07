@@ -740,7 +740,7 @@ export default function PainelPA() {
 
           {modoAuth === "cadastro" && (
             <form className="formStack" onSubmit={criarConta}>
-              <label>Nome<input type="text" required autoComplete="name" value={cadastro.nome} onChange={(e) => setCadastro({ ...cadastro, nome: e.target.value })} /></label>
+              <label>Primeiro nome<input type="text" required autoComplete="name" value={cadastro.nome} onChange={(e) => setCadastro({ ...cadastro, nome: e.target.value })} /></label>
               <label>Número de vendedora no Athos<input type="number" min="1" max="18" step="1" required value={cadastro.numeroAthos} onChange={(e) => setCadastro({ ...cadastro, numeroAthos: e.target.value })} /></label>
               <label>E-mail<input type="email" required autoComplete="email" value={cadastro.email} onChange={(e) => setCadastro({ ...cadastro, email: e.target.value })} /></label>
               <label>Senha<input type="password" minLength="6" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
