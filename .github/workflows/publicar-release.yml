@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - package.json
+      - RELEASE.md
       - .github/workflows/publicar-release.yml
   workflow_dispatch:
 
@@ -59,4 +60,4 @@ jobs:
           gh release create "$TAG" \
             --target "$GITHUB_SHA" \
             --title "Cálculo PA $TAG" \
-            --generate-notes
+            --notes-file RELEASE.md
