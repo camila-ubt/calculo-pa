@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## v1.1.1 — Ajustes de cadastro e documentação visual
+
+Publicada em **13 de setembro de 2026**.
+
+- campo de cadastro renomeado de **Nome** para **Primeiro nome**, deixando mais claro o dado esperado;
+- README atualizado com capturas reais do painel no desktop e das regras de premiação;
+- automação da Wiki aprimorada para manter a versão estável mais recente sincronizada com as releases;
+- atualização do `actions/checkout` utilizado nos workflows.
+
+Esta versão não altera a fórmula do PA, as faixas de premiação nem as regras de conferência.
+
 ## v1.1.0 — Melhorias na apresentação da premiação, segurança e documentação
 
 Publicada em **7 de setembro de 2026**.
