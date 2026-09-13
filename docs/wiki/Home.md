@@ -9,7 +9,7 @@ Centralizar os lançamentos de vendas e peças, calcular automaticamente o PA e 
 ## Principais recursos
 
 - login individual por vendedora;
-- cadastro com nome, e-mail e número de vendedora no Athos;
+- cadastro com primeiro nome, e-mail e número de vendedora no Athos;
 - lançamento diário por uma ou mais lojas;
 - registro de dias trabalhados, não trabalhados e férias;
 - cálculo automático do PA do dia e do mês;
@@ -49,7 +49,7 @@ O Cálculo PA utiliza o **mesmo projeto Supabase do Líder Metas**, permitindo c
 ## Última versão estável
 
 <!-- versao-estavel:inicio -->
-**Última versão estável: [v1.1.0](https://github.com/camila-ubt/calculo-pa/releases/tag/v1.1.0)**
+**Última versão estável: [v1.1.1](https://github.com/camila-ubt/calculo-pa/releases/tag/v1.1.1)**
 <!-- versao-estavel:fim -->
 
 Atualizada automaticamente a partir da release mais recente do GitHub. Consulte as [notas da última versão](https://github.com/camila-ubt/calculo-pa/releases/latest).
