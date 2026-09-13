@@ -4,13 +4,13 @@
 
 O cadastro solicita:
 
-- nome;
+- primeiro nome;
 - número de vendedora no Athos;
 - e-mail;
 - senha;
 - confirmação da senha.
 
-O número do Athos deve ser inteiro entre **1 e 18** e precisa estar disponível. A senha deve ter pelo menos **6 caracteres**.
+O campo **Primeiro nome** deve receber somente o nome pelo qual a vendedora será identificada no sistema. O número do Athos deve ser inteiro entre **1 e 18** e precisa estar disponível. A senha deve ter pelo menos **6 caracteres**.
 
 Dependendo da configuração do Supabase Auth, a usuária pode precisar confirmar o e-mail antes do primeiro login.
 
