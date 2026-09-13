@@ -5,6 +5,7 @@ Aplicação web para lançamento, cálculo e acompanhamento do **PA das vendedor
 ## O que o app faz
 
 - login individual por vendedora;
+- cadastro com primeiro nome, e-mail e número de vendedora no Athos;
 - lançamento diário de vendas e peças por loja;
 - cálculo automático do PA;
 - calendário e histórico mensal;
@@ -27,6 +28,12 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
+## Atualizações da v1.1.1
+
+- campo de cadastro identificado como **Primeiro nome**, deixando mais claro o dado esperado;
+- documentação visual atualizada com capturas reais do painel e da premiação;
+- Wiki preparada para manter automaticamente a versão estável mais recente.
+
 ## Tecnologias
 
 - Next.js
@@ -47,6 +54,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.1.0**
+**v1.1.1 — Ajustes de cadastro e documentação visual.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
