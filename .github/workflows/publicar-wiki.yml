@@ -49,7 +49,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
-          rsync -av --delete --exclude=".git" docs/wiki/ wiki/
+          # --checksum garante atualização mesmo quando a troca de versão mantém o mesmo tamanho do arquivo.
+          rsync -av --checksum --delete --exclude=".git" docs/wiki/ wiki/
           cd wiki
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
