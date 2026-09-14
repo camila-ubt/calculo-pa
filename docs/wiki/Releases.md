@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## v1.1.2 — Manutenção técnica e compatibilidade
+
+Publicada em **14 de setembro de 2026**.
+
+- React e React DOM atualizados para 19.3.0;
+- ESLint atualizado para a versão 10;
+- configuração do lint ajustada para manter compatibilidade com o Next.js;
+- verificações automatizadas de segurança e qualidade concluídas com sucesso.
+
+Esta versão não altera a fórmula do PA, as faixas de premiação nem os fluxos de lançamento e conferência.
+
 ## v1.1.1 — Ajustes de cadastro e documentação visual
 
 Publicada em **13 de setembro de 2026**.

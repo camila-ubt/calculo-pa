@@ -49,7 +49,7 @@ O Cálculo PA utiliza o **mesmo projeto Supabase do Líder Metas**, permitindo c
 ## Última versão estável
 
 <!-- versao-estavel:inicio -->
-**Última versão estável: [v1.1.1](https://github.com/camila-ubt/calculo-pa/releases/tag/v1.1.1)**
+**Última versão estável: [v1.1.2](https://github.com/camila-ubt/calculo-pa/releases/tag/v1.1.2)**
 <!-- versao-estavel:fim -->
 
 Atualizada automaticamente a partir da release mais recente do GitHub. Consulte as [notas da última versão](https://github.com/camila-ubt/calculo-pa/releases/latest).

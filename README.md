@@ -28,11 +28,12 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.1.1
+## Atualizações da v1.1.2
 
-- campo de cadastro identificado como **Primeiro nome**, deixando mais claro o dado esperado;
-- documentação visual atualizada com capturas reais do painel e da premiação;
-- Wiki preparada para manter automaticamente a versão estável mais recente.
+- React e React DOM atualizados para 19.3.0;
+- ESLint atualizado para a versão 10, com configuração compatível com o Next.js;
+- verificações automatizadas de segurança e qualidade concluídas com sucesso;
+- regras de cálculo do PA e da premiação preservadas.
 
 ## Tecnologias
 
@@ -54,6 +55,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.1.1 — Ajustes de cadastro e documentação visual.**
+**v1.1.2 — Manutenção técnica e compatibilidade.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
