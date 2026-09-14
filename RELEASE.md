@@ -1,28 +1,23 @@
-## v1.1.1 — Ajustes de cadastro e documentação visual
+## v1.1.2 — Manutenção técnica e compatibilidade
 
-Publicada em **13 de setembro de 2026**.
+Publicada em **14 de setembro de 2026**.
 
-Esta versão traz pequenos ajustes de clareza no cadastro e melhorias na documentação do projeto, sem alterar as regras de cálculo do PA ou da premiação.
+Esta versão atualiza dependências e ferramentas de qualidade do projeto, sem alterar o funcionamento do cálculo de PA ou da premiação.
 
-### Cadastro
+### Dependências e compatibilidade
 
-- o campo **Nome** passa a ser identificado como **Primeiro nome**, deixando mais claro o dado esperado no cadastro da vendedora.
+- atualização do React e React DOM para 19.3.0;
+- atualização do ESLint para a versão 10;
+- ajuste da configuração do lint para manter compatibilidade com o Next.js;
+- atualização do parser JavaScript utilizado nas verificações.
 
-### Documentação
+### Qualidade
 
-- README atualizado com capturas reais do painel no desktop;
-- inclusão de imagem das regras e faixas de premiação;
-- Wiki atualizada com a orientação correta para o campo **Primeiro nome**;
-- histórico de versões atualizado para registrar a v1.1.1;
-- versão estável da Wiki mantida automaticamente a partir das releases do GitHub.
-
-### Manutenção técnica
-
-- atualização do `actions/checkout` utilizado nos workflows;
-- automação de release ajustada para usar notas oficiais versionadas em `RELEASE.md`.
+- verificações automatizadas de segurança e qualidade concluídas com sucesso;
+- Wiki, README e versões exibidas mantidos em sincronia.
 
 ### Regras preservadas
 
 - fórmula do PA permanece inalterada;
 - faixas e critérios de premiação permanecem inalterados;
-- fluxo de conferência e aprovação permanece inalterado.
+- fluxos de lançamento, conferência e aprovação permanecem inalterados.
