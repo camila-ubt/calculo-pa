@@ -1,5 +1,18 @@
 # Histórico de versões
 
+## v1.2.0 — Segurança da autenticação e atualizações técnicas
+
+Publicada em **24 de setembro de 2026**.
+
+- limite de tentativas em login, cadastro e troca de senha;
+- bloqueio temporário após excesso de falhas de autenticação;
+- senhas novas com mínimo de 8 caracteres, incluindo maiúscula, minúscula e número;
+- correção do campo de confirmação da nova senha;
+- Next.js e ESLint Config Next atualizados para 16.3.5;
+- ações do GitHub CodeQL atualizadas para 4.38.1.
+
+Esta versão não altera a fórmula do PA, as faixas de premiação nem os fluxos de lançamento e conferência.
+
 ## v1.1.2 — Manutenção técnica e compatibilidade
 
 Publicada em **14 de setembro de 2026**.
