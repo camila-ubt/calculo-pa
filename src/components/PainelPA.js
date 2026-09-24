@@ -112,6 +112,94 @@ const situacoes = [
   ["ferias", "Férias"],
 ];
 
+const AUTH_RATE_LIMIT_STORAGE_KEY = "pa_auth_rate_limit_v1";
+const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 5;
+const AUTH_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const AUTH_RATE_LIMIT_BLOCK_MS = 15 * 60 * 1000;
+
+function chaveRateLimitAuth(acao, identificador) {
+  return `${acao}:${(identificador || "geral").toLowerCase()}`;
+}
+
+function lerRateLimitAuth() {
+  if (typeof window === "undefined") return {};
+  try {
+    return JSON.parse(window.localStorage.getItem(AUTH_RATE_LIMIT_STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function salvarRateLimitAuth(valor) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(AUTH_RATE_LIMIT_STORAGE_KEY, JSON.stringify(valor));
+}
+
+function limparRateLimitAuth(acao, identificador) {
+  const limite = lerRateLimitAuth();
+  delete limite[chaveRateLimitAuth(acao, identificador)];
+  salvarRateLimitAuth(limite);
+}
+
+function formatarTempoEspera(msRestantes) {
+  const segundos = Math.ceil(msRestantes / 1000);
+  if (segundos >= 60) {
+    const minutos = Math.ceil(segundos / 60);
+    return `${minutos} minuto${minutos === 1 ? "" : "s"}`;
+  }
+  return `${segundos} segundo${segundos === 1 ? "" : "s"}`;
+}
+
+function obterBloqueioRateLimitAuth(acao, identificador) {
+  const agora = Date.now();
+  const chave = chaveRateLimitAuth(acao, identificador);
+  const limite = lerRateLimitAuth();
+  const atual = limite[chave];
+
+  if (!atual?.bloqueadoAte) return 0;
+  if (atual.bloqueadoAte <= agora) {
+    delete limite[chave];
+    salvarRateLimitAuth(limite);
+    return 0;
+  }
+
+  return atual.bloqueadoAte - agora;
+}
+
+function registrarFalhaRateLimitAuth(acao, identificador) {
+  const agora = Date.now();
+  const chave = chaveRateLimitAuth(acao, identificador);
+  const limite = lerRateLimitAuth();
+  const atual = limite[chave];
+
+  const mesmaJanela = atual && agora - atual.inicioJanela < AUTH_RATE_LIMIT_WINDOW_MS;
+  const tentativas = mesmaJanela ? atual.tentativas + 1 : 1;
+  const inicioJanela = mesmaJanela ? atual.inicioJanela : agora;
+  const bloqueadoAte = tentativas >= AUTH_RATE_LIMIT_MAX_ATTEMPTS
+    ? agora + AUTH_RATE_LIMIT_BLOCK_MS
+    : null;
+
+  limite[chave] = {
+    tentativas,
+    inicioJanela,
+    bloqueadoAte,
+  };
+  salvarRateLimitAuth(limite);
+
+  return {
+    bloqueadoAte,
+    tentativasRestantes: Math.max(AUTH_RATE_LIMIT_MAX_ATTEMPTS - tentativas, 0),
+  };
+}
+
+function validarSenhaSegura(senha) {
+  if (senha.length < 8) return "A senha precisa ter pelo menos 8 caracteres.";
+  if (!/[a-zà-ÿ]/.test(senha) || !/[A-ZÀ-Ý]/.test(senha) || !/\d/.test(senha)) {
+    return "A senha precisa ter letra maiúscula, minúscula e número.";
+  }
+  return "";
+}
+
 export default function PainelPA() {
   const supabase = useMemo(() => createClient(), []);
   const [carregando, setCarregando] = useState(true);
@@ -245,20 +333,43 @@ export default function PainelPA() {
   async function entrar(evento) {
     evento.preventDefault();
     setMensagem("");
+    const email = login.email.trim().toLowerCase();
+    const msBloqueio = obterBloqueioRateLimitAuth("login", email);
+    if (msBloqueio > 0) {
+      setMensagem(`Muitas tentativas de login. Tente novamente em ${formatarTempoEspera(msBloqueio)}.`);
+      return;
+    }
     setProcessandoAuth(true);
 
     const { error } = await supabase.auth.signInWithPassword({
-      email: login.email.trim(),
+      email,
       password: login.senha,
     });
 
-    if (error) setMensagem("E-mail ou senha incorretos.");
+    if (error) {
+      const limite = registrarFalhaRateLimitAuth("login", email);
+      setMensagem(
+        limite.bloqueadoAte
+          ? `Muitas tentativas de login. Tente novamente em ${formatarTempoEspera(limite.bloqueadoAte - Date.now())}.`
+          : "E-mail ou senha incorretos."
+      );
+      setProcessandoAuth(false);
+      return;
+    }
+
+    limparRateLimitAuth("login", email);
     setProcessandoAuth(false);
   }
 
   async function criarConta(evento) {
     evento.preventDefault();
     setMensagem("");
+    const email = cadastro.email.trim().toLowerCase();
+    const msBloqueio = obterBloqueioRateLimitAuth("cadastro", email);
+    if (msBloqueio > 0) {
+      setMensagem(`Muitas tentativas de cadastro. Tente novamente em ${formatarTempoEspera(msBloqueio)}.`);
+      return;
+    }
 
     const numeroAthos = Number(cadastro.numeroAthos);
     if (!Number.isInteger(numeroAthos) || numeroAthos < 1 || numeroAthos > 18) {
@@ -266,8 +377,9 @@ export default function PainelPA() {
       return;
     }
 
-    if (cadastro.senha.length < 6) {
-      setMensagem("A senha precisa ter pelo menos 6 caracteres.");
+    const erroSenha = validarSenhaSegura(cadastro.senha);
+    if (erroSenha) {
+      setMensagem(erroSenha);
       return;
     }
 
@@ -278,7 +390,7 @@ export default function PainelPA() {
 
     setProcessandoAuth(true);
     const { data, error } = await supabase.auth.signUp({
-      email: cadastro.email.trim(),
+      email,
       password: cadastro.senha,
       options: {
         data: {
@@ -290,17 +402,22 @@ export default function PainelPA() {
     });
 
     if (error) {
+      const limite = registrarFalhaRateLimitAuth("cadastro", email);
       const erroNumero = error.message.toLowerCase().includes("database") || error.message.toLowerCase().includes("duplicate");
       setMensagem(
-        error.message.includes("already")
-          ? "Já existe uma conta com este e-mail."
-          : erroNumero
-            ? "Esse número de vendedora no Athos já está em uso ou não está disponível. Escolha outro."
-            : error.message
+        limite.bloqueadoAte
+          ? `Muitas tentativas de cadastro. Tente novamente em ${formatarTempoEspera(limite.bloqueadoAte - Date.now())}.`
+          : error.message.includes("already")
+            ? "Já existe uma conta com este e-mail."
+            : erroNumero
+              ? "Esse número de vendedora no Athos já está em uso ou não está disponível. Escolha outro."
+              : error.message
       );
       setProcessandoAuth(false);
       return;
     }
+
+    limparRateLimitAuth("cadastro", email);
 
     setCadastro({
       nome: "",
@@ -324,9 +441,16 @@ export default function PainelPA() {
   async function salvarNovaSenha(evento) {
     evento.preventDefault();
     setMensagem("");
+    const idRateLimit = sessao?.user?.id || "recuperacao";
+    const msBloqueio = obterBloqueioRateLimitAuth("troca_senha", idRateLimit);
+    if (msBloqueio > 0) {
+      setMensagem(`Muitas tentativas de troca de senha. Tente novamente em ${formatarTempoEspera(msBloqueio)}.`);
+      return;
+    }
 
-    if (novaSenha.senha.length < 6) {
-      setMensagem("A nova senha precisa ter pelo menos 6 caracteres.");
+    const erroSenha = validarSenhaSegura(novaSenha.senha);
+    if (erroSenha) {
+      setMensagem(erroSenha.replace("A senha", "A nova senha"));
       return;
     }
 
@@ -339,10 +463,17 @@ export default function PainelPA() {
     const { error } = await supabase.auth.updateUser({ password: novaSenha.senha });
 
     if (error) {
-      setMensagem(error.message);
+      const limite = registrarFalhaRateLimitAuth("troca_senha", idRateLimit);
+      setMensagem(
+        limite.bloqueadoAte
+          ? `Muitas tentativas de troca de senha. Tente novamente em ${formatarTempoEspera(limite.bloqueadoAte - Date.now())}.`
+          : error.message
+      );
       setProcessandoAuth(false);
       return;
     }
+
+    limparRateLimitAuth("troca_senha", idRateLimit);
 
     await supabase.auth.signOut();
     setNovaSenha({ senha: "", confirmarSenha: "" });
@@ -708,11 +839,11 @@ export default function PainelPA() {
           <form className="formStack" onSubmit={salvarNovaSenha}>
             <label>
               Nova senha
-              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.senha} onChange={(e) => setNovaSenha({ ...novaSenha, senha: e.target.value })} />
+              <input type="password" minLength="8" required autoComplete="new-password" value={novaSenha.senha} onChange={(e) => setNovaSenha({ ...novaSenha, senha: e.target.value })} />
             </label>
             <label>
               Confirmar nova senha
-              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
+              <input type="password" minLength="8" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
             </label>
             <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Alterando..." : "Salvar nova senha"}</button>
           </form>
@@ -743,8 +874,8 @@ export default function PainelPA() {
               <label>Primeiro nome<input type="text" required autoComplete="name" value={cadastro.nome} onChange={(e) => setCadastro({ ...cadastro, nome: e.target.value })} /></label>
               <label>Número de vendedora no Athos<input type="number" min="1" max="18" step="1" required value={cadastro.numeroAthos} onChange={(e) => setCadastro({ ...cadastro, numeroAthos: e.target.value })} /></label>
               <label>E-mail<input type="email" required autoComplete="email" value={cadastro.email} onChange={(e) => setCadastro({ ...cadastro, email: e.target.value })} /></label>
-              <label>Senha<input type="password" minLength="6" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
-              <label>Confirmar senha<input type="password" minLength="6" required autoComplete="new-password" value={cadastro.confirmarSenha} onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })} /></label>
+              <label>Senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
+              <label>Confirmar senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.confirmarSenha} onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })} /></label>
               <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Criando..." : "Criar conta"}</button>
             </form>
           )}
