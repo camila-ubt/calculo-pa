@@ -28,11 +28,13 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.1.2
+## Atualizações da v1.2.0
 
-- React e React DOM atualizados para 19.3.0;
-- ESLint atualizado para a versão 10, com configuração compatível com o Next.js;
-- verificações automatizadas de segurança e qualidade concluídas com sucesso;
+- limite de tentativas em login, cadastro e troca de senha;
+- bloqueio temporário após falhas consecutivas de autenticação;
+- senhas novas com mínimo de 8 caracteres, incluindo maiúscula, minúscula e número;
+- Next.js e ESLint Config Next atualizados para 16.3.5;
+- GitHub CodeQL atualizado para 4.38.1;
 - regras de cálculo do PA e da premiação preservadas.
 
 ## Tecnologias
@@ -55,6 +57,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.1.2 — Manutenção técnica e compatibilidade.**
+**v1.2.0 — Segurança da autenticação e atualizações técnicas.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
