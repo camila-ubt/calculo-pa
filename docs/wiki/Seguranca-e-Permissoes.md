@@ -35,7 +35,10 @@ Além da RLS:
 - funções internas de trigger não ficam executáveis diretamente por usuários;
 - objetos administrativos de produção também têm grants anônimos removidos;
 - o frontend aplica rate limit local em login, cadastro e troca de senha, com bloqueio temporário após falhas consecutivas;
+- a proteção local tolera indisponibilidade do armazenamento do navegador sem impedir a autenticação;
 - criação e redefinição de senha exigem mínimo de 8 caracteres com letra maiúscula, minúscula e número;
+- após redefinir a senha, o cliente solicita encerramento global das sessões;
+- mensagens de falha de autenticação evitam expor detalhes internos do provedor;
 - variáveis sensíveis não ficam no repositório.
 
 ## Segurança do repositório
@@ -46,7 +49,7 @@ O projeto possui:
 - `.gitignore` para evitar publicação de arquivos locais sensíveis;
 - `SECURITY.md`;
 - GitHub CodeQL;
-- workflow de verificação de segurança;
+- workflow de verificação de segurança, incluindo busca por padrões de chaves secretas;
 - Dependabot;
 - CODEOWNERS.
 

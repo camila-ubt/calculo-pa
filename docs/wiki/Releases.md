@@ -1,5 +1,17 @@
 # Histórico de versões
 
+## v1.3.0 — Reforço de segurança e sessões
+
+Publicada em **24 de setembro de 2026**.
+
+- proteção local de autenticação isolada e testada;
+- falhas de armazenamento local não interrompem o fluxo de login;
+- mensagens de autenticação evitam expor detalhes internos do provedor;
+- redefinição de senha solicita encerramento global das sessões;
+- verificação de padrões de chaves secretas adicionada ao workflow de segurança.
+
+Esta versão não altera a fórmula do PA, as faixas de premiação ou os fluxos de lançamento e conferência. Nenhuma alteração de banco é aplicada nesta release.
+
 ## v1.2.0 — Segurança da autenticação e atualizações técnicas
 
 Publicada em **24 de setembro de 2026**.

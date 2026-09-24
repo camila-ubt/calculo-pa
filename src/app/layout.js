@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
             rel="noopener noreferrer"
             aria-label="Ver releases do Cálculo PA"
           >
-            v1.2.0
+            v1.3.0
           </a>
           <span aria-hidden="true"> • </span>
           <span>Desenvolvido por</span>{" "}

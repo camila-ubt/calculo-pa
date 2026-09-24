@@ -5,6 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import PremiacaoMensal from "@/components/PremiacaoMensal";
 import AvisosCorrecoes from "@/components/AvisosCorrecoes";
 import { premioDoMes } from "@/lib/premiacao.mjs";
+import {
+  formatarTempoEspera,
+  limparRateLimitAuth,
+  obterBloqueioRateLimitAuth,
+  registrarFalhaRateLimitAuth,
+  validarSenhaSegura,
+} from "@/lib/authRateLimit.mjs";
 import CalendarioLancamentos from "@/components/CalendarioLancamentos";
 import "./painel-desktop.css";
 
@@ -111,94 +118,6 @@ const situacoes = [
   ["nao_trabalhou", "Não trabalhei"],
   ["ferias", "Férias"],
 ];
-
-const AUTH_RATE_LIMIT_STORAGE_KEY = "pa_auth_rate_limit_v1";
-const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 5;
-const AUTH_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-const AUTH_RATE_LIMIT_BLOCK_MS = 15 * 60 * 1000;
-
-function chaveRateLimitAuth(acao, identificador) {
-  return `${acao}:${(identificador || "geral").toLowerCase()}`;
-}
-
-function lerRateLimitAuth() {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(window.localStorage.getItem(AUTH_RATE_LIMIT_STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function salvarRateLimitAuth(valor) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(AUTH_RATE_LIMIT_STORAGE_KEY, JSON.stringify(valor));
-}
-
-function limparRateLimitAuth(acao, identificador) {
-  const limite = lerRateLimitAuth();
-  delete limite[chaveRateLimitAuth(acao, identificador)];
-  salvarRateLimitAuth(limite);
-}
-
-function formatarTempoEspera(msRestantes) {
-  const segundos = Math.ceil(msRestantes / 1000);
-  if (segundos >= 60) {
-    const minutos = Math.ceil(segundos / 60);
-    return `${minutos} minuto${minutos === 1 ? "" : "s"}`;
-  }
-  return `${segundos} segundo${segundos === 1 ? "" : "s"}`;
-}
-
-function obterBloqueioRateLimitAuth(acao, identificador) {
-  const agora = Date.now();
-  const chave = chaveRateLimitAuth(acao, identificador);
-  const limite = lerRateLimitAuth();
-  const atual = limite[chave];
-
-  if (!atual?.bloqueadoAte) return 0;
-  if (atual.bloqueadoAte <= agora) {
-    delete limite[chave];
-    salvarRateLimitAuth(limite);
-    return 0;
-  }
-
-  return atual.bloqueadoAte - agora;
-}
-
-function registrarFalhaRateLimitAuth(acao, identificador) {
-  const agora = Date.now();
-  const chave = chaveRateLimitAuth(acao, identificador);
-  const limite = lerRateLimitAuth();
-  const atual = limite[chave];
-
-  const mesmaJanela = atual && agora - atual.inicioJanela < AUTH_RATE_LIMIT_WINDOW_MS;
-  const tentativas = mesmaJanela ? atual.tentativas + 1 : 1;
-  const inicioJanela = mesmaJanela ? atual.inicioJanela : agora;
-  const bloqueadoAte = tentativas >= AUTH_RATE_LIMIT_MAX_ATTEMPTS
-    ? agora + AUTH_RATE_LIMIT_BLOCK_MS
-    : null;
-
-  limite[chave] = {
-    tentativas,
-    inicioJanela,
-    bloqueadoAte,
-  };
-  salvarRateLimitAuth(limite);
-
-  return {
-    bloqueadoAte,
-    tentativasRestantes: Math.max(AUTH_RATE_LIMIT_MAX_ATTEMPTS - tentativas, 0),
-  };
-}
-
-function validarSenhaSegura(senha) {
-  if (senha.length < 8) return "A senha precisa ter pelo menos 8 caracteres.";
-  if (!/[a-zà-ÿ]/.test(senha) || !/[A-ZÀ-Ý]/.test(senha) || !/\d/.test(senha)) {
-    return "A senha precisa ter letra maiúscula, minúscula e número.";
-  }
-  return "";
-}
 
 export default function PainelPA() {
   const supabase = useMemo(() => createClient(), []);
@@ -411,7 +330,7 @@ export default function PainelPA() {
             ? "Já existe uma conta com este e-mail."
             : erroNumero
               ? "Esse número de vendedora no Athos já está em uso ou não está disponível. Escolha outro."
-              : error.message
+              : "Não foi possível criar a conta. Tente novamente em instantes."
       );
       setProcessandoAuth(false);
       return;
@@ -467,7 +386,7 @@ export default function PainelPA() {
       setMensagem(
         limite.bloqueadoAte
           ? `Muitas tentativas de troca de senha. Tente novamente em ${formatarTempoEspera(limite.bloqueadoAte - Date.now())}.`
-          : error.message
+          : "Não foi possível alterar a senha. Solicite um novo link e tente novamente."
       );
       setProcessandoAuth(false);
       return;
@@ -475,11 +394,15 @@ export default function PainelPA() {
 
     limparRateLimitAuth("troca_senha", idRateLimit);
 
-    await supabase.auth.signOut();
+    const { error: erroSaida } = await supabase.auth.signOut({ scope: "global" });
     setNovaSenha({ senha: "", confirmarSenha: "" });
     setRecuperacaoSenha(false);
     setModoAuth("entrar");
-    setMensagem("Senha alterada com sucesso. Entre novamente com a nova senha.");
+    setMensagem(
+      erroSaida
+        ? "Senha alterada. Por segurança, encerre suas outras sessões antes de entrar novamente."
+        : "Senha alterada com sucesso. Entre novamente com a nova senha."
+    );
 
     if (typeof window !== "undefined") {
       window.history.replaceState({}, "", window.location.pathname);
