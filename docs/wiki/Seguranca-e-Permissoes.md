@@ -34,6 +34,8 @@ Além da RLS:
 - sequences relacionadas ao PA deixam de conceder acesso anônimo;
 - funções internas de trigger não ficam executáveis diretamente por usuários;
 - objetos administrativos de produção também têm grants anônimos removidos;
+- o frontend aplica rate limit local em login, cadastro e troca de senha, com bloqueio temporário após falhas consecutivas;
+- criação e redefinição de senha exigem mínimo de 8 caracteres com letra maiúscula, minúscula e número;
 - variáveis sensíveis não ficam no repositório.
 
 ## Segurança do repositório
