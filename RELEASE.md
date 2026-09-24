@@ -1,28 +1,24 @@
-## v1.3.0 — Reforço de segurança e sessões
+## v1.3.1 — Bloqueio de perfis inativos no banco
 
 Publicada em **24 de setembro de 2026**.
 
-Esta versão reforça os fluxos de autenticação e a proteção do código da aplicação, sem alterar as regras de cálculo do PA ou da premiação.
+Esta versão registra o endurecimento das permissões do Cálculo PA aplicado no Supabase.
 
-### Autenticação
+### Segurança do banco
 
-- proteção local de tentativas isolada em módulo próprio e coberta por testes;
-- falhas de acesso ao armazenamento local não interrompem o login;
-- mensagens de erro de cadastro e redefinição deixam de repassar detalhes internos do provedor;
-- redefinição de senha solicita encerramento global das sessões.
+- vendedoras desativadas deixam de acessar os próprios dias e lançamentos mesmo quando ainda existe uma sessão autenticada válida;
+- as policies de `dias_pa` e `lancamentos_pa` exigem que `usuarios_pa.ativo = true`;
+- a validação de perfil ativo fica centralizada em helper privado utilizado pelas policies;
+- administradores ativos continuam autorizados pelo helper administrativo existente;
+- a migration aplicada no Supabase está versionada no repositório.
 
-### Repositório
+### Validação
 
-- workflow de segurança passa a verificar padrões de chaves secretas no código da aplicação;
-- testes automatizados adicionados para senha forte e bloqueio temporário;
-- CodeQL, auditoria de dependências, lint e build permanecem ativos.
+- o comportamento foi testado com uma sessão autenticada: perfil ativo manteve acesso e o mesmo perfil simulado como inativo passou a visualizar zero registros;
+- a simulação foi executada em transação revertida, sem alterar o estado real da usuária.
 
 ### Regras preservadas
 
 - fórmula do PA permanece inalterada;
 - faixas e critérios de premiação permanecem inalterados;
-- fluxos de lançamento e conferência permanecem inalterados.
-
-### Banco de dados
-
-Nenhuma alteração de schema ou policy é aplicada nesta versão. O endurecimento adicional das policies de perfis desativados será tratado separadamente.
+- fluxos de lançamento, conferência e aprovação permanecem inalterados.
