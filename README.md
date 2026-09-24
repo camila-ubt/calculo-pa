@@ -28,13 +28,12 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.3.0
+## Atualizações da v1.3.1
 
-- proteção local de autenticação isolada e testada;
-- falhas de armazenamento local não interrompem o login;
-- mensagens de erro de autenticação deixam de expor detalhes internos;
-- redefinição de senha solicita encerramento global das sessões;
-- CI passa a verificar padrões de chaves secretas no código da aplicação;
+- perfis desativados deixam de acessar os próprios dias e lançamentos mesmo com uma sessão ainda válida;
+- policies de `dias_pa` e `lancamentos_pa` passam a exigir `usuarios_pa.ativo = true`;
+- helper privado de autorização centraliza a verificação de perfil ativo;
+- migration de segurança aplicada no Supabase e versionada no repositório;
 - regras de cálculo do PA e da premiação preservadas.
 
 ## Tecnologias
@@ -57,6 +56,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.3.0 — Reforço de segurança e sessões.**
+**v1.3.1 — Bloqueio de perfis inativos no banco.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
