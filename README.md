@@ -28,13 +28,13 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.2.0
+## Atualizações da v1.3.0
 
-- limite de tentativas em login, cadastro e troca de senha;
-- bloqueio temporário após falhas consecutivas de autenticação;
-- senhas novas com mínimo de 8 caracteres, incluindo maiúscula, minúscula e número;
-- Next.js e ESLint Config Next atualizados para 16.3.5;
-- GitHub CodeQL atualizado para 4.38.1;
+- proteção local de autenticação isolada e testada;
+- falhas de armazenamento local não interrompem o login;
+- mensagens de erro de autenticação deixam de expor detalhes internos;
+- redefinição de senha solicita encerramento global das sessões;
+- CI passa a verificar padrões de chaves secretas no código da aplicação;
 - regras de cálculo do PA e da premiação preservadas.
 
 ## Tecnologias
@@ -57,6 +57,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.2.0 — Segurança da autenticação e atualizações técnicas.**
+**v1.3.0 — Reforço de segurança e sessões.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
