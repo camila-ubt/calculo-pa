@@ -18,13 +18,13 @@ Pode consultar os registros de todas as usuárias e executar operações adminis
 
 As tabelas `usuarios_pa`, `dias_pa`, `lancamentos_pa` e `aprovacoes_premiacao_pa` usam RLS.
 
-As policies verificam o `auth.uid()` e a propriedade do registro antes de permitir leitura ou escrita.
+As policies verificam o `auth.uid()`, a propriedade do registro e, para dias e lançamentos da própria vendedora, exigem também que o perfil em `usuarios_pa` esteja ativo. Administradores continuam passando pelo helper administrativo privado.
 
 ## Helper administrativo privado
 
 A verificação de administrador foi movida para o schema `private`, evitando expor a função como RPC pública pelo PostgREST.
 
-A função só pode ser executada pelo papel `authenticated` quando utilizada pelas policies.
+A função só pode ser executada pelo papel `authenticated` quando utilizada pelas policies. O schema `private` também contém um helper específico para confirmar se a usuária do PA continua ativa antes de liberar os próprios dias e lançamentos.
 
 ## Defesa em profundidade
 
