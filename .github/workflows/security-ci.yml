@@ -43,6 +43,15 @@ jobs:
       - name: Auditar dependências
         run: npm audit --audit-level=high
 
+      - name: Verificar segredos no código da aplicação
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -nE 'sb_secret_|service_role' -- src next.config.mjs package.json; then
+            echo "Foi encontrado um padrão de segredo em arquivo da aplicação." >&2
+            exit 1
+          fi
+
       - name: Executar lint
         run: npm run lint
 
