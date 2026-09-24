@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## v1.3.1 — Bloqueio de perfis inativos no banco
+
+Publicada em **24 de setembro de 2026**.
+
+- policies de dias e lançamentos passam a exigir perfil ativo em `usuarios_pa`;
+- uma sessão ainda válida deixa de permitir acesso aos dados do PA quando a vendedora é desativada;
+- helper privado centraliza a verificação de perfil ativo;
+- migration de segurança aplicada no Supabase e versionada no repositório.
+
+Esta versão não altera a fórmula do PA, a premiação ou os fluxos de lançamento e conferência.
+
 ## v1.3.0 — Reforço de segurança e sessões
 
 Publicada em **24 de setembro de 2026**.
