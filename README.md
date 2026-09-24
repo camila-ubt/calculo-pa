@@ -45,7 +45,7 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ## Segurança
 
-O projeto usa autenticação individual, políticas de **Row Level Security (RLS)** e separação de permissões entre vendedoras e administração. Variáveis sensíveis ficam fora do repositório e devem ser configuradas no ambiente de execução.
+O projeto usa autenticação individual, políticas de **Row Level Security (RLS)** e separação de permissões entre vendedoras e administração. O frontend também aplica limite de tentativas para login, cadastro e troca de senha, com bloqueio temporário após falhas consecutivas. Variáveis sensíveis ficam fora do repositório e devem ser configuradas no ambiente de execução.
 
 ## Documentação
 
