@@ -1,5 +1,15 @@
 # Histórico de versões
 
+## v1.3.2 — Manutenção técnica e dependências
+
+Publicada em **2 de outubro de 2026**.
+
+- Next.js atualizado de 16.3.5 para 16.3.6;
+- ESLint Config Next atualizado para 16.3.6;
+- ações do GitHub CodeQL atualizadas de 4.38.1 para 4.38.2;
+- nenhuma alteração na fórmula do PA, na premiação ou nos fluxos de lançamento e conferência;
+- nenhuma migration nova.
+
 ## v1.3.1 — Bloqueio de perfis inativos no banco
 
 Publicada em **24 de setembro de 2026**.
