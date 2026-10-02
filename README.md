@@ -28,13 +28,12 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.3.1
+## Atualizações da v1.3.2
 
-- perfis desativados deixam de acessar os próprios dias e lançamentos mesmo com uma sessão ainda válida;
-- policies de `dias_pa` e `lancamentos_pa` passam a exigir `usuarios_pa.ativo = true`;
-- helper privado de autorização centraliza a verificação de perfil ativo;
-- migration de segurança aplicada no Supabase e versionada no repositório;
-- regras de cálculo do PA e da premiação preservadas.
+- Next.js e ESLint Config Next atualizados para 16.3.6;
+- ações do GitHub CodeQL atualizadas para 4.38.2;
+- manutenção técnica sem alteração na fórmula do PA, na premiação ou nos fluxos de lançamento e conferência;
+- nenhuma migration nova.
 
 ## Tecnologias
 
@@ -56,6 +55,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.3.1 — Bloqueio de perfis inativos no banco.**
+**v1.3.2 — Manutenção técnica e dependências.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).
