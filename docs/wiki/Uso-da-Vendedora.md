@@ -39,9 +39,15 @@ O fluxo de recuperação é integrado ao ambiente compartilhado com o Líder Met
 - pelo menos uma loja deve ser selecionada em dia trabalhado;
 - vendas e peças precisam estar preenchidas para todas as lojas selecionadas.
 
+## Mês fechado
+
+Quando a gestão conclui a conferência no Líder Metas e fecha o mês, o Cálculo PA mostra **Mês fechado · somente consulta**.
+
+Nesse período, a vendedora ainda pode navegar pelo calendário, abrir os dias, consultar o histórico, o resumo mensal e o PA. Porém, não pode alterar a situação do dia, lojas, vendas, peças, férias, remover lançamentos nem salvar mudanças.
+
 ## Editar um dia
 
-Ao abrir um dia já registrado, os dados são carregados no formulário. Ao salvar novamente, o sistema atualiza o dia e substitui os lançamentos daquele dia pelos novos valores.
+Ao abrir um dia já registrado de um mês ainda aberto, os dados são carregados no formulário. Ao salvar novamente, o sistema atualiza o dia e substitui os lançamentos daquele dia pelos novos valores.
 
 ## Remover lançamento
 
