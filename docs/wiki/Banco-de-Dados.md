@@ -79,6 +79,9 @@ O ambiente de produção pode conter objetos auxiliares específicos da conferê
 - `correcoes_pa`;
 - `detalhes_pa_diarios`;
 - `resumo_pa_mensal`;
-- `resumo_pa_mensal_loja`.
+- `resumo_pa_mensal_loja`;
+- `fechamentos_pa`.
+
+O Cálculo PA não lê diretamente os dados administrativos do fechamento. A função `consultar_fechamento_pa` retorna somente se o mês está fechado e a data/hora do fechamento para usuárias ativas, sem expor o identificador de quem realizou a ação.
 
 Esses objetos pertencem ao fluxo administrativo e também têm o acesso anônimo removido pelas migrations de segurança.
