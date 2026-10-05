@@ -144,6 +144,7 @@ export default function PainelPA() {
   const [historicoAberto, setHistoricoAberto] = useState(true);
   const [lojaHistorico, setLojaHistorico] = useState("");
   const [periodoCarregado, setPeriodoCarregado] = useState(null);
+  const [fechamentoMes, setFechamentoMes] = useState(null);
   const ultimaCarga = useRef(0);
   const dataInputRef = useRef(null);
   const [form, setForm] = useState(formularioVazio([]));
@@ -204,7 +205,7 @@ export default function PainelPA() {
     setPeriodoCarregado(null);
     setMensagem("");
 
-    const [lojasResp, diasResp] = await Promise.all([
+    const [lojasResp, diasResp, fechamentoResp] = await Promise.all([
       supabase.from("lojas").select("*").eq("ativa", true).order("ordem"),
       supabase
         .from("dias_pa")
@@ -213,6 +214,9 @@ export default function PainelPA() {
         .gte("data", inicioMes(mes))
         .lte("data", fimMes(mes))
         .order("data", { ascending: false }),
+      supabase.rpc("consultar_fechamento_pa", {
+        p_mes: inicioMes(mes),
+      }),
     ]);
 
     if (carga !== ultimaCarga.current) return;
@@ -224,7 +228,15 @@ export default function PainelPA() {
     const diasDoMes = diasResp.data || [];
     setLojas(lojasAtivas);
     setDias(diasDoMes);
-    if (!erro) setPeriodoCarregado(`${sessao.user.id}:${mes}`);
+
+    if (fechamentoResp.error) {
+      setFechamentoMes(null);
+      if (!erro) setMensagem("Não foi possível conferir se este mês está fechado. Atualize a página.");
+    } else {
+      setFechamentoMes(fechamentoResp.data || { fechado: false, fechado_em: null });
+    }
+
+    if (!erro && !fechamentoResp.error) setPeriodoCarregado(`${sessao.user.id}:${mes}`);
 
     const hoje = hojeLocal();
     setForm((atual) => {
@@ -439,6 +451,10 @@ export default function PainelPA() {
   }
 
   function selecionarSituacao(situacao) {
+    if (fechamentoMes?.fechado) {
+      setMensagem("Este mês está fechado e disponível somente para consulta.");
+      return;
+    }
     setMensagem("");
     setForm((atual) => ({
       ...atual,
@@ -450,6 +466,10 @@ export default function PainelPA() {
   }
 
   function alternarLoja(lojaId) {
+    if (fechamentoMes?.fechado) {
+      setMensagem("Este mês está fechado e disponível somente para consulta.");
+      return;
+    }
     const id = String(lojaId);
     setForm((atual) => {
       const selecionada = atual.lojasSelecionadas.includes(id);
@@ -463,6 +483,7 @@ export default function PainelPA() {
   }
 
   function alterarLoja(lojaId, campo, valor) {
+    if (fechamentoMes?.fechado) return;
     const id = String(lojaId);
     const somenteDigitos = String(valor).replace(/\D/g, "").slice(0, 3);
     const numero = somenteDigitos === "" ? "" : Number(somenteDigitos);
@@ -514,6 +535,11 @@ export default function PainelPA() {
   }
 
   async function removerLancamento() {
+    if (fechamentoMes?.fechado) {
+      setMensagem("Este mês está fechado. Os lançamentos não podem mais ser removidos.");
+      return;
+    }
+
     const diaExistente = dias.find((dia) => dia.data === form.data);
     if (!diaExistente) {
       setMensagem("Não existe lançamento salvo nesta data.");
@@ -547,6 +573,11 @@ export default function PainelPA() {
   }
 
   async function salvarFerias() {
+    if (fechamentoMes?.fechado) {
+      setMensagem("Este mês está fechado. O período de férias não pode mais ser alterado.");
+      return false;
+    }
+
     const periodo = datasEntre(form.feriasInicio, form.feriasFim);
 
     if (periodo.length === 0) {
@@ -589,8 +620,14 @@ export default function PainelPA() {
 
   async function salvarDia(evento) {
     evento.preventDefault();
-    setSalvando(true);
     setMensagem("");
+
+    if (fechamentoMes?.fechado) {
+      setMensagem("Este mês está fechado. Os lançamentos estão disponíveis somente para consulta.");
+      return;
+    }
+
+    setSalvando(true);
 
     if (form.data > hojeLocal()) {
       setMensagem("Não é possível fazer lançamentos em datas futuras.");
@@ -845,6 +882,7 @@ export default function PainelPA() {
   }
 
   const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
+  const mesFechado = Boolean(fechamentoMes?.fechado);
   const editandoOutroDia = form.data !== hojeLocal();
   const lancamentoExistente = dias.some((dia) => dia.data === form.data);
   const dadosProntos = !carregando && periodoCarregado === `${sessao.user.id}:${mes}`;
@@ -874,6 +912,13 @@ export default function PainelPA() {
           <input type="month" value={mes} onChange={(e) => { if (e.target.value) setMes(e.target.value); }} />
         </label>
       </header>
+
+      {mesFechado && (
+        <div className="closedMonthNotice" role="status">
+          <strong>✓ Mês fechado</strong>
+          <span>Este mês foi conferido pela gestão e está disponível somente para consulta.</span>
+        </div>
+      )}
 
       <AvisosCorrecoes key={sessao.user.id} supabase={supabase} usuarioId={sessao.user.id} onAbrir={abrirCorrecao} />
       </div>
@@ -934,6 +979,7 @@ export default function PainelPA() {
                   type="button"
                   aria-pressed={form.situacao === valor}
                   onClick={() => selecionarSituacao(valor)}
+                  disabled={mesFechado}
                 >
                   {texto}
                 </button>
@@ -957,6 +1003,7 @@ export default function PainelPA() {
                         type="button"
                         aria-pressed={selecionada}
                         onClick={() => alternarLoja(loja.id)}
+                        disabled={mesFechado}
                       >
                         {loja.sigla || loja.nome}
                       </button>
@@ -990,6 +1037,7 @@ export default function PainelPA() {
                               maxLength={3}
                               value={valores.vendas}
                               onChange={(e) => alterarLoja(lojaId, "vendas", e.target.value)}
+                              disabled={mesFechado}
                             />
                           </label>
                           <label>
@@ -1001,6 +1049,7 @@ export default function PainelPA() {
                               maxLength={3}
                               value={valores.pecas}
                               onChange={(e) => alterarLoja(lojaId, "pecas", e.target.value)}
+                              disabled={mesFechado}
                             />
                           </label>
                         </div>
@@ -1029,6 +1078,7 @@ export default function PainelPA() {
                     required
                     value={form.feriasInicio}
                     onChange={(e) => setForm((atual) => ({ ...atual, feriasInicio: e.target.value }))}
+                    disabled={mesFechado}
                   />
                 </label>
                 <label>
@@ -1039,6 +1089,7 @@ export default function PainelPA() {
                     min={form.feriasInicio || undefined}
                     value={form.feriasFim}
                     onChange={(e) => setForm((atual) => ({ ...atual, feriasFim: e.target.value }))}
+                    disabled={mesFechado}
                   />
                 </label>
               </div>
@@ -1048,12 +1099,12 @@ export default function PainelPA() {
 
           <div className="launchActions">
             {lancamentoExistente && (
-              <button className="secondary removeLaunchButton" type="button" onClick={removerLancamento} disabled={salvando}>
-                Remover lançamento
+              <button className="secondary removeLaunchButton" type="button" onClick={removerLancamento} disabled={salvando || mesFechado}>
+                {mesFechado ? "Mês fechado" : "Remover lançamento"}
               </button>
             )}
-            <button className="primary saveButton" type="submit" disabled={salvando}>
-              {salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
+            <button className="primary saveButton" type="submit" disabled={salvando || mesFechado}>
+              {mesFechado ? "Mês fechado · somente consulta" : salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
             </button>
           </div>
         </form>
@@ -1063,7 +1114,7 @@ export default function PainelPA() {
 
       <div className="conferenceColumn">
         <CalendarioLancamentos mes={mes} dias={dias} hoje={hojeLocal()} selecionado={form.data}
-          pronto={dadosProntos} carregando={carregando} salvando={salvando}
+          pronto={dadosProntos} carregando={carregando} salvando={salvando} fechado={mesFechado}
           onSelecionar={(data) => {
             selecionarData(data);
             dataInputRef.current?.focus();
