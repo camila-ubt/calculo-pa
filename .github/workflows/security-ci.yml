@@ -38,7 +38,7 @@ jobs:
           node-version: "24"
 
       - name: Instalar dependências sem scripts de instalação
-        run: npm install --ignore-scripts --no-fund --no-audit
+        run: npm ci --ignore-scripts --no-fund --no-audit
 
       - name: Auditar dependências
         run: npm audit --audit-level=high
