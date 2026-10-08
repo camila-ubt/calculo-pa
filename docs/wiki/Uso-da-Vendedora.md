@@ -1,58 +1,25 @@
 # Uso pela vendedora
 
-## Cadastro
+## Acesso
 
-O cadastro solicita:
+Crie sua conta com primeiro nome, número de vendedora no Athos, e-mail e senha. O número deve ser inteiro de 1 a 18 e estar disponível. A senha deve ter pelo menos oito caracteres, com letra maiúscula, minúscula e número. Confirme o e-mail se solicitado e entre com uma conta liberada e ativa.
 
-- primeiro nome;
-- número de vendedora no Athos;
-- e-mail;
-- senha;
-- confirmação da senha.
+Se esquecer a senha, use **Esqueci minha senha**. A recuperação é feita pelo ambiente compartilhado com o Líder Metas; após a redefinição, entre novamente com a nova senha.
 
-O campo **Primeiro nome** deve receber somente o nome pelo qual a vendedora será identificada no sistema. O número do Athos deve ser inteiro entre **1 e 18** e precisa estar disponível. A senha deve ter pelo menos **6 caracteres**.
+## Lançamentos
 
-Dependendo da configuração do Supabase Auth, a usuária pode precisar confirmar o e-mail antes do primeiro login.
+Escolha a data e marque **Trabalhando**, **Não trabalhei** ou **Férias**. Em dia trabalhado, selecione uma ou mais lojas, informe vendas e peças de cada uma e salve. Os campos aceitam inteiros de 0 a 999; peças não podem ser menores que vendas. Informe zero quando não houver movimento.
 
-## Login
+Para férias, informe início e fim. Todos os dias do período são registrados como férias, substituindo eventuais lançamentos dessas datas. O lançamento diário não aceita datas futuras.
 
-O acesso é feito com e-mail e senha. Usuárias sem perfil liberado recebem mensagem de acesso pendente. Perfis inativos recebem mensagem de acesso suspenso.
+## Consulta e correção
 
-## Recuperação de senha
+Use o filtro de mês, o calendário ou o histórico para consultar os registros. Em mês aberto, selecione um dia, ajuste os valores e salve novamente. **Remover lançamento** pede confirmação e retira o dia do cálculo mensal.
 
-O fluxo de recuperação é integrado ao ambiente compartilhado com o Líder Metas. Após redefinir a senha, a sessão é encerrada e a usuária entra novamente com a nova senha.
-
-## Fazer um lançamento
-
-1. Escolha a data.
-2. Marque a situação do dia.
-3. Se estiver trabalhando, selecione a loja ou as lojas.
-4. Informe vendas e peças de cada loja.
-5. Confira o PA calculado automaticamente.
-6. Salve o lançamento.
-
-## Regras dos campos
-
-- vendas e peças aceitam apenas números inteiros;
-- valores permitidos: 0 a 999;
-- peças nunca podem ser menores que vendas;
-- pelo menos uma loja deve ser selecionada em dia trabalhado;
-- vendas e peças precisam estar preenchidas para todas as lojas selecionadas.
+Os avisos de correção da gestão permitem consultar os valores alterados, o motivo e a data correspondente. Após conferir, marque o aviso como lido.
 
 ## Mês fechado
 
-Quando a gestão conclui a conferência no Líder Metas e fecha o mês, o Cálculo PA mostra **Mês fechado · somente consulta**.
+O aviso **Mês fechado · somente consulta** indica que a gestão encerrou o período. Calendário, histórico, resumo e PA continuam acessíveis, mas não é possível editar, remover ou salvar lançamentos.
 
-Nesse período, a vendedora ainda pode navegar pelo calendário, abrir os dias, consultar o histórico, o resumo mensal e o PA. Porém, não pode alterar a situação do dia, lojas, vendas, peças, férias, remover lançamentos nem salvar mudanças.
-
-## Editar um dia
-
-Ao abrir um dia já registrado de um mês ainda aberto, os dados são carregados no formulário. Ao salvar novamente, o sistema atualiza o dia e substitui os lançamentos daquele dia pelos novos valores.
-
-## Remover lançamento
-
-A remoção apaga o dia e seus lançamentos associados. O sistema pede confirmação antes da exclusão. Depois da remoção, aquele dia deixa de contar no PA mensal.
-
-## Férias
-
-Ao selecionar férias, informe início e fim. O sistema cria ou atualiza todos os dias do período como férias e remove eventuais lançamentos de vendas/peças dessas datas.
+A edição também fica bloqueada enquanto o fechamento está sendo consultado. Se a consulta falhar, atualize a página antes de tentar novamente.
