@@ -12,6 +12,7 @@ Aplicação web para lançamento, cálculo e acompanhamento do **PA das vendedor
 - resumo do mês por loja;
 - regras e acompanhamento de premiação;
 - conferência administrativa;
+- indicação de **mês fechado** para a vendedora, com histórico disponível somente para consulta;
 - controle de acesso com RLS no Supabase.
 
 ## Capturas do sistema
@@ -28,12 +29,13 @@ Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições 
 
 ![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
 
-## Atualizações da v1.3.2
+## Atualizações da v1.4.0
 
-- Next.js e ESLint Config Next atualizados para 16.3.6;
-- ações do GitHub CodeQL atualizadas para 4.38.2;
-- manutenção técnica sem alteração na fórmula do PA, na premiação ou nos fluxos de lançamento e conferência;
-- nenhuma migration nova.
+- meses fechados no Líder Metas aparecem como **Mês fechado · somente consulta**;
+- calendário e histórico continuam disponíveis para conferência;
+- edição de situação, lojas, vendas, peças, férias e remoção fica desabilitada;
+- o banco continua sendo a proteção final contra alterações;
+- consulta do fechamento é feita por uma RPC restrita a usuárias ativas.
 
 ## Tecnologias
 
@@ -55,6 +57,6 @@ A documentação detalhada de funcionamento, banco de dados, regras de negócio,
 
 ## Versão
 
-**v1.3.2 — Manutenção técnica e dependências.**
+**v1.4.0 — Consulta de meses fechados.**
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).

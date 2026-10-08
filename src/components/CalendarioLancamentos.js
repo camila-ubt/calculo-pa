@@ -1,6 +1,6 @@
 import { calendarioDoMes } from "@/lib/calendario.mjs";
 
-export default function CalendarioLancamentos({ mes, dias, hoje, selecionado, pronto, carregando, salvando, onSelecionar }) {
+export default function CalendarioLancamentos({ mes, dias, hoje, selecionado, pronto, carregando, salvando, fechado = false, onSelecionar }) {
   const calendario = calendarioDoMes(mes, pronto ? dias : [], hoje);
   const simbolos = { lancado: "✓", ausencia: "—", pendente: "!", futuro: "·" };
   return (
@@ -8,6 +8,7 @@ export default function CalendarioLancamentos({ mes, dias, hoje, selecionado, pr
       <h2 id="calendarHeading">Calendário de lançamentos</h2>
       <p className="calendarProgress" role="status">
         {!pronto ? carregando ? "Carregando calendário…" : "Não foi possível conferir este mês."
+          : fechado ? "Mês fechado · somente consulta."
           : mes > hoje.slice(0, 7) ? "Este mês ainda não começou."
           : calendario.pendentes ? `${calendario.pendentes} ${calendario.pendentes === 1 ? "dia pendente" : "dias pendentes"}${mes === hoje.slice(0, 7) ? " até hoje" : " no mês"}`
           : mes === hoje.slice(0, 7) ? "Tudo preenchido até hoje!" : "Todos os dias preenchidos!"}
@@ -28,7 +29,11 @@ export default function CalendarioLancamentos({ mes, dias, hoje, selecionado, pr
         ))}
       </div>
       <div className="calendarLegend"><span>✓ Lançado</span><span>! Pendente</span><span>— Não trabalhou / férias</span></div>
-      <p className="helperText calendarHelp">Clique em um dia para lançar ou corrigir. A marca indica preenchimento, não aprovação da premiação.</p>
+      <p className="helperText calendarHelp">
+        {fechado
+          ? "Clique em um dia para consultar. O mês já foi conferido pela gestão e não aceita alterações."
+          : "Clique em um dia para lançar ou corrigir. A marca indica preenchimento, não aprovação da premiação."}
+      </p>
     </section>
   );
 }

@@ -1,5 +1,17 @@
 # Histórico de versões
 
+## v1.4.0 — Mês fechado para vendedoras
+
+Publicada em **5 de outubro de 2026**.
+
+- meses encerrados pela gestão aparecem como **Mês fechado · somente consulta**;
+- calendário, histórico, resumo e PA continuam acessíveis;
+- situação do dia, lojas, vendas, peças, férias, remoção e salvamento ficam bloqueados;
+- consulta do fechamento por RPC restrita a usuárias ativas;
+- proteção definitiva contra alterações continua no banco compartilhado;
+- fórmula do PA e premiação não foram alteradas.
+
+
 ## v1.3.2 — Manutenção técnica e dependências
 
 Publicada em **2 de outubro de 2026**.

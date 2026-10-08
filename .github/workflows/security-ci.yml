@@ -20,7 +20,7 @@ jobs:
   validar:
     name: Lint, testes, build e auditoria
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_apenas_teste
@@ -38,7 +38,7 @@ jobs:
           node-version: "24"
 
       - name: Instalar dependências sem scripts de instalação
-        run: npm install --ignore-scripts --no-fund --no-audit
+        run: npm ci --ignore-scripts --no-fund --no-audit
 
       - name: Auditar dependências
         run: npm audit --audit-level=high
