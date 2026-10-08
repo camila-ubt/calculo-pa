@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import PremiacaoMensal from "@/components/PremiacaoMensal";
 import AvisosCorrecoes from "@/components/AvisosCorrecoes";
 import { premioDoMes } from "@/lib/premiacao.mjs";
+import { dataNoMes, podeEditarPeriodo } from "@/lib/fechamento.mjs";
 import {
   formatarTempoEspera,
   limparRateLimitAuth,
@@ -229,28 +230,22 @@ export default function PainelPA() {
     setLojas(lojasAtivas);
     setDias(diasDoMes);
 
-    if (fechamentoResp.error) {
+    const fechamentoConfirmado = !fechamentoResp.error && typeof fechamentoResp.data?.fechado === "boolean";
+    if (!fechamentoConfirmado) {
       setFechamentoMes(null);
       if (!erro) setMensagem("Não foi possível conferir se este mês está fechado. Atualize a página.");
     } else {
-      setFechamentoMes(fechamentoResp.data || { fechado: false, fechado_em: null });
+      setFechamentoMes(fechamentoResp.data);
     }
 
-    if (!erro && !fechamentoResp.error) setPeriodoCarregado(`${sessao.user.id}:${mes}`);
+    if (!erro && fechamentoConfirmado) setPeriodoCarregado(`${sessao.user.id}:${mes}`);
 
-    const hoje = hojeLocal();
     setForm((atual) => {
-      if (atual.data !== hoje) {
-        const diaSelecionado = diasDoMes.find((dia) => dia.data === atual.data);
-        return diaSelecionado
-          ? formularioDoDia(diaSelecionado, lojasAtivas)
-          : formularioVazio(lojasAtivas, atual.data);
-      }
-
-      if (mes !== hoje.slice(0, 7)) return formularioVazio(lojasAtivas, hoje);
-
-      const diaHoje = diasDoMes.find((dia) => dia.data === hoje);
-      return diaHoje ? formularioDoDia(diaHoje, lojasAtivas) : formularioVazio(lojasAtivas, hoje);
+      const dataSelecionada = dataNoMes(atual.data, mes, hojeLocal());
+      const diaSelecionado = diasDoMes.find((dia) => dia.data === dataSelecionada);
+      return diaSelecionado
+        ? formularioDoDia(diaSelecionado, lojasAtivas)
+        : formularioVazio(lojasAtivas, dataSelecionada);
     });
 
     setCarregando(false);
@@ -450,11 +445,16 @@ export default function PainelPA() {
     selecionarData(novaData);
   }
 
+  function conferirEdicao() {
+    if (!edicaoBloqueada) return true;
+    setMensagem(mesFechado
+      ? "Este mês está fechado e disponível somente para consulta."
+      : "Aguarde a confirmação do mês antes de editar. Se a consulta falhou, atualize a página.");
+    return false;
+  }
+
   function selecionarSituacao(situacao) {
-    if (fechamentoMes?.fechado) {
-      setMensagem("Este mês está fechado e disponível somente para consulta.");
-      return;
-    }
+    if (!conferirEdicao()) return;
     setMensagem("");
     setForm((atual) => ({
       ...atual,
@@ -466,10 +466,7 @@ export default function PainelPA() {
   }
 
   function alternarLoja(lojaId) {
-    if (fechamentoMes?.fechado) {
-      setMensagem("Este mês está fechado e disponível somente para consulta.");
-      return;
-    }
+    if (!conferirEdicao()) return;
     const id = String(lojaId);
     setForm((atual) => {
       const selecionada = atual.lojasSelecionadas.includes(id);
@@ -483,7 +480,7 @@ export default function PainelPA() {
   }
 
   function alterarLoja(lojaId, campo, valor) {
-    if (fechamentoMes?.fechado) return;
+    if (!conferirEdicao()) return;
     const id = String(lojaId);
     const somenteDigitos = String(valor).replace(/\D/g, "").slice(0, 3);
     const numero = somenteDigitos === "" ? "" : Number(somenteDigitos);
@@ -535,10 +532,7 @@ export default function PainelPA() {
   }
 
   async function removerLancamento() {
-    if (fechamentoMes?.fechado) {
-      setMensagem("Este mês está fechado. Os lançamentos não podem mais ser removidos.");
-      return;
-    }
+    if (!conferirEdicao()) return;
 
     const diaExistente = dias.find((dia) => dia.data === form.data);
     if (!diaExistente) {
@@ -573,10 +567,7 @@ export default function PainelPA() {
   }
 
   async function salvarFerias() {
-    if (fechamentoMes?.fechado) {
-      setMensagem("Este mês está fechado. O período de férias não pode mais ser alterado.");
-      return false;
-    }
+    if (!conferirEdicao()) return false;
 
     const periodo = datasEntre(form.feriasInicio, form.feriasFim);
 
@@ -622,10 +613,7 @@ export default function PainelPA() {
     evento.preventDefault();
     setMensagem("");
 
-    if (fechamentoMes?.fechado) {
-      setMensagem("Este mês está fechado. Os lançamentos estão disponíveis somente para consulta.");
-      return;
-    }
+    if (!conferirEdicao()) return;
 
     setSalvando(true);
 
@@ -882,10 +870,14 @@ export default function PainelPA() {
   }
 
   const nomeExibicao = (perfil.nome || "").trim().toUpperCase();
-  const mesFechado = Boolean(fechamentoMes?.fechado);
+  const mesFechado = periodoCarregado === `${sessao.user.id}:${mes}` && fechamentoMes?.fechado === true;
   const editandoOutroDia = form.data !== hojeLocal();
   const lancamentoExistente = dias.some((dia) => dia.data === form.data);
   const dadosProntos = !carregando && periodoCarregado === `${sessao.user.id}:${mes}`;
+  const edicaoBloqueada = !podeEditarPeriodo({
+    carregando, periodoCarregado, usuarioId: sessao.user.id,
+    mes, data: form.data, fechamento: fechamentoMes,
+  });
   const premiacao = premioDoMes(resumoMes.pa, resumoMes.diasValidos, ultimoDiaDoMesPreenchido(mes, dias));
   const lojasDoHistorico = new Map(lojas.map((loja) => [String(loja.id), loja.sigla || loja.nome]));
   dias.forEach((dia) => (dia.lancamentos_pa || []).forEach((item) => {
@@ -979,7 +971,7 @@ export default function PainelPA() {
                   type="button"
                   aria-pressed={form.situacao === valor}
                   onClick={() => selecionarSituacao(valor)}
-                  disabled={mesFechado}
+                  disabled={edicaoBloqueada}
                 >
                   {texto}
                 </button>
@@ -1003,7 +995,7 @@ export default function PainelPA() {
                         type="button"
                         aria-pressed={selecionada}
                         onClick={() => alternarLoja(loja.id)}
-                        disabled={mesFechado}
+                        disabled={edicaoBloqueada}
                       >
                         {loja.sigla || loja.nome}
                       </button>
@@ -1037,7 +1029,7 @@ export default function PainelPA() {
                               maxLength={3}
                               value={valores.vendas}
                               onChange={(e) => alterarLoja(lojaId, "vendas", e.target.value)}
-                              disabled={mesFechado}
+                              disabled={edicaoBloqueada}
                             />
                           </label>
                           <label>
@@ -1049,7 +1041,7 @@ export default function PainelPA() {
                               maxLength={3}
                               value={valores.pecas}
                               onChange={(e) => alterarLoja(lojaId, "pecas", e.target.value)}
-                              disabled={mesFechado}
+                              disabled={edicaoBloqueada}
                             />
                           </label>
                         </div>
@@ -1078,7 +1070,7 @@ export default function PainelPA() {
                     required
                     value={form.feriasInicio}
                     onChange={(e) => setForm((atual) => ({ ...atual, feriasInicio: e.target.value }))}
-                    disabled={mesFechado}
+                    disabled={edicaoBloqueada}
                   />
                 </label>
                 <label>
@@ -1089,7 +1081,7 @@ export default function PainelPA() {
                     min={form.feriasInicio || undefined}
                     value={form.feriasFim}
                     onChange={(e) => setForm((atual) => ({ ...atual, feriasFim: e.target.value }))}
-                    disabled={mesFechado}
+                    disabled={edicaoBloqueada}
                   />
                 </label>
               </div>
@@ -1099,11 +1091,11 @@ export default function PainelPA() {
 
           <div className="launchActions">
             {lancamentoExistente && (
-              <button className="secondary removeLaunchButton" type="button" onClick={removerLancamento} disabled={salvando || mesFechado}>
+              <button className="secondary removeLaunchButton" type="button" onClick={removerLancamento} disabled={salvando || edicaoBloqueada}>
                 {mesFechado ? "Mês fechado" : "Remover lançamento"}
               </button>
             )}
-            <button className="primary saveButton" type="submit" disabled={salvando || mesFechado}>
+            <button className="primary saveButton" type="submit" disabled={salvando || edicaoBloqueada}>
               {mesFechado ? "Mês fechado · somente consulta" : salvando ? "Salvando..." : form.situacao === "ferias" ? "Salvar período de férias" : "Salvar lançamento"}
             </button>
           </div>
