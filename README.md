@@ -1,62 +1,21 @@
 # Cálculo PA
 
-Aplicação web para lançamento, cálculo e acompanhamento do **PA das vendedoras**, integrada ao mesmo Supabase utilizado pelo **Líder Metas**.
+Aplicativo para registrar vendas e peças e acompanhar o **PA (Peças por Atendimento)** das vendedoras. O PA é calculado pela divisão do total de peças pelo total de vendas.
 
-## O que o app faz
+**[Acessar o aplicativo](https://calculo-pa.vercel.app)** · **[Consultar a Wiki](https://github.com/camila-ubt/calculo-pa/wiki)**
 
-- login individual por vendedora;
-- cadastro com primeiro nome, e-mail e número de vendedora no Athos;
-- lançamento diário de vendas e peças por loja;
-- cálculo automático do PA;
-- calendário e histórico mensal;
-- resumo do mês por loja;
-- regras e acompanhamento de premiação;
-- conferência administrativa;
-- indicação de **mês fechado** para a vendedora, com histórico disponível somente para consulta;
-- controle de acesso com RLS no Supabase.
+## Como funciona
 
-## Capturas do sistema
+Cada vendedora acessa sua conta, escolhe a data e informa a situação do dia. Nos dias trabalhados, registra vendas e peças por loja. O painel calcula o PA e apresenta calendário, histórico e resumo mensal.
 
-### Painel no desktop
+A premiação depende do PA do mês, de pelo menos 15 dias trabalhados e da conferência e aprovação da gestão. Meses fechados no Líder Metas permanecem disponíveis somente para consulta.
 
-Lançamento diário com cálculo do PA, calendário, histórico e resumo mensal. Na captura de agosto de 2026, a premiação está aguardando conferência e aprovação.
+![Painel do Cálculo PA com lançamentos, calendário, histórico e resumo mensal](./docs/imagens/painel-desktop.jpg)
 
-![Painel do Cálculo PA no desktop com lançamento, calendário, histórico e resumo de agosto de 2026](./docs/imagens/painel-desktop.jpg)
+## Sobre o projeto
 
-### Regras de premiação
+Desenvolvido com Next.js, JavaScript, Supabase e PostgreSQL, com hospedagem na Vercel. Compartilha o ambiente de dados com o Líder Metas e utiliza acesso individual e permissões no banco.
 
-Consulta às faixas de PA, quantidade mínima de dias trabalhados e condições para aprovação da premiação.
-
-![Janela com as regras e faixas de premiação do Cálculo PA](./docs/imagens/premiacao-desktop.jpg)
-
-## Atualizações da v1.4.0
-
-- meses fechados no Líder Metas aparecem como **Mês fechado · somente consulta**;
-- calendário e histórico continuam disponíveis para conferência;
-- edição de situação, lojas, vendas, peças, férias e remoção fica desabilitada;
-- o banco continua sendo a proteção final contra alterações;
-- consulta do fechamento é feita por uma RPC restrita a usuárias ativas.
-
-## Tecnologias
-
-- Next.js
-- JavaScript
-- Supabase
-- PostgreSQL
-- Vercel
-
-## Segurança
-
-O projeto usa autenticação individual, políticas de **Row Level Security (RLS)** e separação de permissões entre vendedoras e administração. O frontend também aplica limite de tentativas para login, cadastro e troca de senha, com bloqueio temporário após falhas consecutivas. Variáveis sensíveis ficam fora do repositório e devem ser configuradas no ambiente de execução.
-
-## Documentação
-
-📚 **[Acessar a Wiki completa do Cálculo PA](https://github.com/camila-ubt/calculo-pa/wiki)**
-
-A documentação detalhada de funcionamento, banco de dados, regras de negócio, segurança, configuração e manutenção também está versionada em [`docs/wiki`](./docs/wiki/Home.md).
-
-## Versão
-
-**v1.4.0 — Consulta de meses fechados.**
+**Versão do projeto: v1.4.1.** Consulte as [releases](https://github.com/camila-ubt/calculo-pa/releases) para ver as versões publicadas.
 
 Desenvolvido por [@camila-ubt](https://github.com/camila-ubt).

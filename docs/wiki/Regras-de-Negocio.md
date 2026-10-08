@@ -1,63 +1,23 @@
-# Regras de negócio e premiação
+# Cálculo e premiação
 
-## Cálculo do PA
+## PA do dia e do mês
 
-O PA é calculado por:
+**PA = total de peças ÷ total de vendas.** Por exemplo, 52 peças em 20 vendas resultam em PA 2,60. Sem vendas, o PA exibido é zero.
 
-`PA = peças / vendas`
-
-Se não houver vendas, o PA exibido é 0.
-
-## PA do dia
-
-Quando há mais de uma loja, o cálculo usa os totais consolidados do dia:
-
-`PA do dia = soma das peças de todas as lojas / soma das vendas de todas as lojas`
-
-## PA do mês
-
-O resumo mensal considera apenas dias com situação **trabalhado**.
-
-`PA mensal = total de peças dos dias trabalhados / total de vendas dos dias trabalhados`
-
-## Dias válidos
-
-Cada data marcada como **trabalhado** conta como um dia válido, independentemente de quantas lojas foram selecionadas naquele dia.
+O PA diário usa a soma dos registros de todas as lojas daquele dia. O PA mensal divide o total de peças pelo total de vendas dos dias trabalhados; não é a média dos PAs diários. Cada data trabalhada conta como um dia válido, mesmo com mais de uma loja.
 
 ## Premiação
 
-A premiação só é avaliada quando o **último dia do mês está preenchido**.
-
-Também é obrigatório atingir pelo menos **15 dias trabalhados** no mês.
-
-Faixas:
+A premiação é calculada quando o último dia do mês está preenchido e há pelo menos **15 dias trabalhados**.
 
 | PA mensal | Premiação potencial |
 |---|---:|
-| abaixo de 2,20 | sem premiação |
-| de 2,20 até 2,59 | R$ 100 em peças |
-| 2,60 ou mais | R$ 150 em peças |
+| Menor que 2,20 | Sem premiação |
+| A partir de 2,20 e menor que 2,60 | R$ 100 em peças |
+| A partir de 2,60 | R$ 150 em peças |
 
-## Aprovação
+Atingir a faixa deixa o resultado **aguardando conferência e aprovação**. A gestão verifica os lançamentos e registra a decisão. O painel informa se a premiação está pendente, aprovada ou reprovada.
 
-Atingir a faixa não libera a premiação automaticamente. O resultado fica como **aguardando conferência e aprovação**.
+## Encerramento do mês
 
-Status possíveis:
-
-- `pendente`;
-- `aprovada`;
-- `reprovada`.
-
-Apenas a administração pode alterar o resultado final da aprovação.
-
-## Regras de consistência
-
-O sistema aplica validações tanto na interface quanto no banco:
-
-- vendas não podem ser negativas;
-- peças não podem ser negativas;
-- peças devem ser maiores ou iguais às vendas;
-- não pode existir mais de um registro de dia para a mesma usuária e data;
-- não pode existir mais de um lançamento da mesma loja dentro do mesmo dia.
-
-Essa duplicação de validação entre frontend e banco evita que uma chamada direta à API grave dados inválidos.
+O fechamento é realizado pela gestão no Líder Metas. Após o encerramento, a vendedora pode consultar o resultado e o histórico, mas não alterar os registros do período.

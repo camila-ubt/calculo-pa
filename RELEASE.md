@@ -1,20 +1,7 @@
-## v1.4.0 — Mês fechado para vendedoras
+## v1.4.1 — Correções e documentação simplificada
 
-Publicada em **5 de outubro de 2026**.
+A data do lançamento acompanha o mês selecionado, e a edição só é liberada após confirmar que o período está aberto. Durante o carregamento ou em caso de falha na consulta, os campos e o salvamento permanecem bloqueados.
 
-O Cálculo PA agora reconhece os meses fechados pela gestão no Líder Metas.
+Next.js e ESLint Config Next foram atualizados para 16.4.0. A dependência vulnerável da ferramenta de lint foi substituída, e a instalação automatizada utiliza as versões fixadas no package-lock.json.
 
-### Consulta de mês fechado
-
-- exibe **Mês fechado · somente consulta** quando o período já foi conferido e encerrado;
-- calendário, histórico, resumo e PA continuam visíveis;
-- situação do dia, lojas, vendas, peças e férias ficam bloqueados para edição;
-- remoção e salvamento de lançamentos ficam desabilitados;
-- a consulta do fechamento é feita por RPC restrita a usuárias ativas;
-- as proteções de banco aplicadas pelo Líder Metas continuam impedindo qualquer alteração no período.
-
-### Banco
-
-Inclui a migration `20261005170500_consulta_fechamento_pa_vendedora.sql`, que adiciona a função `consultar_fechamento_pa` sem expor quem realizou o fechamento.
-
-A fórmula do PA e as regras de premiação permanecem inalteradas.
+O README e a Wiki foram resumidos para apresentar o aplicativo, orientar os lançamentos e explicar o cálculo e a premiação. A fórmula do PA e as regras de premiação permanecem inalteradas. Esta versão não adiciona migrations.
