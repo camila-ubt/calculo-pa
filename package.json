@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "eslint": "^10",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.2",
     "espree": "^11.2.0"
   },
   "overrides": {
