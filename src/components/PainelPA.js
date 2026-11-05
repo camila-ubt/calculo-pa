@@ -783,7 +783,7 @@ export default function PainelPA() {
         <section className="card loginCard">
           <p className="muted">Segurança da conta</p>
           <h1>Redefinir senha</h1>
-          <p className="muted">Crie uma nova senha para acessar o Meu PA.</p>
+          <p className="muted">Crie uma nova senha para acessar o Meu PA. Pode usar 8 números ou letras maiúsculas, minúsculas e números.</p>
           <form className="formStack" onSubmit={salvarNovaSenha}>
             <label>
               Nova senha
@@ -824,6 +824,7 @@ export default function PainelPA() {
               <label>E-mail<input type="email" required autoComplete="email" value={cadastro.email} onChange={(e) => setCadastro({ ...cadastro, email: e.target.value })} /></label>
               <label>Senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
               <label>Confirmar senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.confirmarSenha} onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })} /></label>
+              <p className="muted">A senha pode ter só 8 números. Evite datas de nascimento e sequências fáceis. Senhas já cadastradas não mudam.</p>
               <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Criando..." : "Criar conta"}</button>
             </form>
           )}
