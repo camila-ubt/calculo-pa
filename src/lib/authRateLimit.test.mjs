@@ -17,12 +17,20 @@ function memoria() {
   };
 }
 
-test("senha exige 8 caracteres, maiúscula, minúscula e número", () => {
-  assert.ok(validarSenhaSegura("Abc123"));
+test("permite senha numérica com ao menos oito dígitos sem eliminar senhas fortes", () => {
+  assert.equal(validarSenhaSegura("80472619"), "");
+  assert.equal(validarSenhaSegura("804726193"), "");
+  assert.equal(validarSenhaSegura("Senha123"), "");
+  assert.ok(validarSenhaSegura("1234567"));
   assert.ok(validarSenhaSegura("abcdefgh"));
   assert.ok(validarSenhaSegura("ABCDEFG1"));
   assert.ok(validarSenhaSegura("Abcdefgh"));
-  assert.equal(validarSenhaSegura("Senha123"), "");
+});
+
+test("rejeita senhas numéricas óbvias", () => {
+  assert.ok(validarSenhaSegura("12345678"));
+  assert.ok(validarSenhaSegura("87654321"));
+  assert.ok(validarSenhaSegura("11111111"));
 });
 
 test("rate limit bloqueia após cinco falhas e expira", () => {
