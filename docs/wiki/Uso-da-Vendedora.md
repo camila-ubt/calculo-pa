@@ -2,7 +2,7 @@
 
 ## Acesso
 
-Crie sua conta com primeiro nome, número de vendedora no Athos, e-mail e senha. O número deve ser inteiro de 1 a 18 e estar disponível. A senha deve ter pelo menos oito caracteres, com letra maiúscula, minúscula e número. Confirme o e-mail se solicitado e entre com uma conta liberada e ativa.
+Crie sua conta com primeiro nome, número de vendedora no Athos, e-mail e senha. O número deve ser inteiro de 1 a 18 e estar disponível. A senha pode ser formada por pelo menos seis números ou ter oito caracteres com letra maiúscula, minúscula e número. Evite datas de nascimento, números repetidos e sequências simples. Contas já existentes continuam usando suas senhas normalmente; nenhuma senha é redefinida automaticamente. Confirme o e-mail se solicitado e entre com uma conta liberada e ativa.
 
 Se esquecer a senha, use **Esqueci minha senha**. A recuperação é feita pelo ambiente compartilhado com o Líder Metas; após a redefinição, entre novamente com a nova senha.
 
