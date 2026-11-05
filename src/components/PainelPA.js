@@ -783,15 +783,15 @@ export default function PainelPA() {
         <section className="card loginCard">
           <p className="muted">Segurança da conta</p>
           <h1>Redefinir senha</h1>
-          <p className="muted">Crie uma nova senha para acessar o Meu PA. Pode usar 8 números ou letras maiúsculas, minúsculas e números.</p>
+          <p className="muted">Crie uma nova senha para acessar o Meu PA. Pode usar 6 números ou uma senha com 8 caracteres, incluindo letras maiúsculas, minúsculas e números.</p>
           <form className="formStack" onSubmit={salvarNovaSenha}>
             <label>
               Nova senha
-              <input type="password" minLength="8" required autoComplete="new-password" value={novaSenha.senha} onChange={(e) => setNovaSenha({ ...novaSenha, senha: e.target.value })} />
+              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.senha} onChange={(e) => setNovaSenha({ ...novaSenha, senha: e.target.value })} />
             </label>
             <label>
               Confirmar nova senha
-              <input type="password" minLength="8" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
+              <input type="password" minLength="6" required autoComplete="new-password" value={novaSenha.confirmarSenha} onChange={(e) => setNovaSenha({ ...novaSenha, confirmarSenha: e.target.value })} />
             </label>
             <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Alterando..." : "Salvar nova senha"}</button>
           </form>
@@ -822,9 +822,9 @@ export default function PainelPA() {
               <label>Primeiro nome<input type="text" required autoComplete="name" value={cadastro.nome} onChange={(e) => setCadastro({ ...cadastro, nome: e.target.value })} /></label>
               <label>Número de vendedora no Athos<input type="number" min="1" max="18" step="1" required value={cadastro.numeroAthos} onChange={(e) => setCadastro({ ...cadastro, numeroAthos: e.target.value })} /></label>
               <label>E-mail<input type="email" required autoComplete="email" value={cadastro.email} onChange={(e) => setCadastro({ ...cadastro, email: e.target.value })} /></label>
-              <label>Senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
-              <label>Confirmar senha<input type="password" minLength="8" required autoComplete="new-password" value={cadastro.confirmarSenha} onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })} /></label>
-              <p className="muted">A senha pode ter só 8 números. Evite datas de nascimento e sequências fáceis. Senhas já cadastradas não mudam.</p>
+              <label>Senha<input type="password" minLength="6" required autoComplete="new-password" value={cadastro.senha} onChange={(e) => setCadastro({ ...cadastro, senha: e.target.value })} /></label>
+              <label>Confirmar senha<input type="password" minLength="6" required autoComplete="new-password" value={cadastro.confirmarSenha} onChange={(e) => setCadastro({ ...cadastro, confirmarSenha: e.target.value })} /></label>
+              <p className="muted">A senha pode ter só 6 números. Evite datas de nascimento e sequências fáceis. Senhas já cadastradas não mudam.</p>
               <button className="primary" type="submit" disabled={processandoAuth}>{processandoAuth ? "Criando..." : "Criar conta"}</button>
             </form>
           )}
