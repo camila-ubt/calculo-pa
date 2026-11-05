@@ -88,18 +88,19 @@ export function formatarTempoEspera(msRestantes) {
 
 export function validarSenhaSegura(senha) {
   const valor = String(senha || "");
-  if (valor.length < 8) return "A senha precisa ter pelo menos 8 caracteres (pode ser só números).";
 
-  // Permite senhas numéricas sem alterar o login ou as senhas já cadastradas.
+  // Uma senha só numérica pode ter seis dígitos; demais senhas mantêm a regra de oito caracteres.
   if (/^[0-9]+$/.test(valor)) {
+    if (valor.length < 6) return "A senha numérica precisa ter pelo menos 6 dígitos.";
     const repetidos = /^(\d)\1+$/.test(valor);
     const sequencia = "0123456789".includes(valor) || "9876543210".includes(valor);
-    if (repetidos || sequencia) return "Evite números repetidos ou sequências como 12345678.";
+    if (repetidos || sequencia) return "Evite números repetidos ou sequências como 123456.";
     return "";
   }
 
+  if (valor.length < 8) return "A senha precisa ter 6 números ou pelo menos 8 caracteres com letras e números.";
   if (!/[a-zà-ÿ]/.test(valor) || !/[A-ZÀ-Ý]/.test(valor) || !/\d/.test(valor)) {
-    return "Use 8 números ou uma senha com letra maiúscula, minúscula e número.";
+    return "Use 6 números ou uma senha com letra maiúscula, minúscula e número.";
   }
   return "";
 }
